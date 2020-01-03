@@ -1,4 +1,4 @@
-class TestSimpleTokenizer:
+class TestBaseCode:
 
     @staticmethod
     def test_dummy_test():

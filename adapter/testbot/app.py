@@ -5,6 +5,11 @@ import sys
 import traceback
 from datetime import datetime
 
+import os
+import time
+import re
+from slackclient import SlackClient
+
 from aiohttp import web
 from aiohttp.web import Request, Response, json_response
 from botbuilder.core import (
@@ -18,73 +23,71 @@ from botbuilder.schema import Activity, ActivityTypes
 from .bots import EchoBot
 from .config import DefaultConfig
 
-CONFIG = DefaultConfig()
+# instantiate Slack client
+slack_client = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
+# starterbot's user ID in Slack: value is assigned after the bot starts up
+starterbot_id = None
 
-# Create adapter.
-# See https://aka.ms/about-bot-adapter to learn more about how bots work.
-SETTINGS = BotFrameworkAdapterSettings(CONFIG.APP_ID, CONFIG.APP_PASSWORD)
-ADAPTER = BotFrameworkAdapter(SETTINGS)
+# constants
+RTM_READ_DELAY = 1 # 1 second delay between reading from RTM
+EXAMPLE_COMMAND = "do"
+MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
 
 
-# Catch-all for errors.
-async def on_error(context: TurnContext, error: Exception):
-    # This check writes out errors to console log .vs. app insights.
-    # NOTE: In production environment, you should consider logging this to Azure
-    #       application insights.
-    print(f"\n [on_turn_error] unhandled error: {error}", file=sys.stderr)
-    traceback.print_exc()
+def parse_bot_commands(slack_events):
+    """
+        Parses a list of events coming from the Slack RTM API to find bot commands.
+        If a bot command is found, this function returns a tuple of command and channel.
+        If its not found, then this function returns None, None.
+    """
+    for event in slack_events:
+        if event["type"] == "message" and not "subtype" in event:
+            user_id, message = parse_direct_mention(event["text"])
+            if user_id == starterbot_id:
+                return message, event["channel"]
+    return None, None
 
-    # Send a message to the user
-    await context.send_activity("The bot encountered an error or bug.")
-    await context.send_activity(
-        "To continue to run this bot, please fix the bot source code."
+
+def parse_direct_mention(message_text):
+    """
+        Finds a direct mention (a mention that is at the beginning) in message text
+        and returns the user ID which was mentioned. If there is no direct mention, returns None
+    """
+    matches = re.search(MENTION_REGEX, message_text)
+    # the first group contains the username, the second group contains the remaining message
+    return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
+
+
+def handle_command(command, channel):
+    """
+        Executes bot command if the command is known
+    """
+    # Default response is help text for the user
+    default_response = "Not sure what you mean. Try *{}*.".format(EXAMPLE_COMMAND)
+
+    # Finds and executes the given command, filling in response
+    response = None
+    # This is where you start to implement more commands!
+    if command.startswith(EXAMPLE_COMMAND):
+        response = "Sure...write some more code then I can do that!"
+
+    # Sends the response back to the channel
+    slack_client.api_call(
+        "chat.postMessage",
+        channel=channel,
+        text=response or default_response
     )
-    # Send a trace activity if we're talking to the Bot Framework Emulator
-    if context.activity.channel_id == "emulator":
-        # Create a trace activity that contains the error object
-        trace_activity = Activity(
-            label="TurnError",
-            name="on_turn_error Trace",
-            timestamp=datetime.utcnow(),
-            type=ActivityTypes.trace,
-            value=f"{error}",
-            value_type="https://www.botframework.com/schemas/error",
-        )
-        # Send a trace activity, which will be displayed in Bot Framework Emulator
-        await context.send_activity(trace_activity)
 
-
-ADAPTER.on_turn_error = on_error
-
-# Create the Bot
-BOT = EchoBot()
-
-
-# Listen for incoming requests on /api/messages
-async def messages(req: Request) -> Response:
-    # Main bot message handler.
-    if "application/json" in req.headers["Content-Type"]:
-        body = await req.json()
-    else:
-        return Response(status=415)
-
-    activity = Activity().deserialize(body)
-    auth_header = req.headers["Authorization"] if "Authorization" in req.headers else ""
-
-    try:
-        response = await ADAPTER.process_activity(activity, auth_header, BOT.on_turn)
-        if response:
-            return json_response(data=response.body, status=response.status)
-        return Response(status=201)
-    except Exception as exception:
-        raise exception
-
-
-APP = web.Application(middlewares=[aiohttp_error_middleware])
-APP.router.add_post("/api/messages", messages)
 
 if __name__ == "__main__":
-    try:
-        web.run_app(APP, host="localhost", port=CONFIG.PORT)
-    except Exception as error:
-        raise error
+    if slack_client.rtm_connect(with_team_state=False):
+        print("Starter Bot connected and running!")
+        # Read bot's user ID by calling Web API method `auth.test`
+        starterbot_id = slack_client.api_call("auth.test")["user_id"]
+        while True:
+            command, channel = parse_bot_commands(slack_client.rtm_read())
+            if command:
+                handle_command(command, channel)
+            time.sleep(RTM_READ_DELAY)
+    else:
+        print("Connection failed. Exception traceback printed above.")

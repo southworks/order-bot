@@ -20,11 +20,14 @@ from botbuilder.core import MessageFactory, UserState
 
 from data_models.order import Order
 
+from typing import List
+
 
 class OrderDialog(ComponentDialog):
+    """ TODO: Add description for OrderDialog class. """
     def __init__(self, user_state: UserState):
         super(OrderDialog, self).__init__(OrderDialog.__name__)
-
+        self.order_list: List[Order] = list()
         self.user_profile_accesor = user_state.create_property("UserProfile")
 
         self.add_dialog(
@@ -44,7 +47,7 @@ class OrderDialog(ComponentDialog):
     async def options_step(
         self, step_context: WaterfallStepContext
     ) -> DialogTurnResult:
-        """ TODO: document me """
+        """ TODO: Add description for OrderDialog.options_step """
         return await step_context.prompt(
             ChoicePrompt.__name__,
             PromptOptions(
@@ -54,7 +57,7 @@ class OrderDialog(ComponentDialog):
         )
 
     async def second_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
-        """ TODO: Document me ... """
+        """ TODO: Add description for OrderDialog.second_step """
         return_response = "Bye!"
 
         await step_context.context.send_activity(

@@ -1,0 +1,86 @@
+Bot: Hello user! 
+Bot: Your items are:
+Bot:
+- item1
+- item2
+- item3
+
+(RT can be used here to recognize numbers or numbers with units)
+User: -|delete [n] item1
+order.delete_item()
+	User: +|add [n] item1
+	order.add_item()
+
+Bot: 1 item "item1" deleted!
+Bot: Do you want to confirm the order?
+YES / NO
+	If YES:
+		Bot: Your items are:
+		Bot:
+		- item2
+		- item3
+		Bot: Is this okay?
+		YES / NO
+			If YES:
+				Action.execute(order, item) -> Action (Confirm)
+					order.confirm_order()
+				order.show_order()
+				Bot: Your order #0001 is: 
+				Bot: 
+				- item2
+				- item3
+				
+				User: Ok!
+			If NO:
+				Bot: Sorry? (EndDialog = RESET)
+	If NO:
+		Bot: Sorry? (EndDialog = RESET)
+		(This should let the user keep adding or deleting items from the list)
+
+TODO:
+Create 2 more conversations
+
+Case 1:
+Bot: Hello user! 
+Bot: There are no items in the list
+
+User: + 4 Coca 1.5 L
+
+Bot: Item "Coca" added!
+
+User: + Yerba X 1 Kg
+
+Bot: Item "Yerba" added!
+
+User: delete 1 Coca 1.5 L
+
+Bot: 1 Item "Coca" deleted!
+
+Case 2:
+Bot: Hello user! 
+Bot: Your items are:
+Bot:
+- item1
+- item2
+
+User: -|delete [n] item5
+
+Bot: Sorry, there is no "item5" in the list!
+Bot: Your items are:
+Bot:
+- item1
+- item2
+
+Case 3 (Recognizers-Text):
+Bot: Hello user!
+Bot: Your items are:
+Bot:
+- item1
+- item2
+
+User: Add half a kilogram of Apples.
+	User: Add two Bananas.
+
+(Here the Bot uses RT to recognize the number and the unit it represents)
+Bot: 1/2 Kg of "Apples" added!
+Bot: 2 "Bananas" added!

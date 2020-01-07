@@ -15,8 +15,8 @@ from botbuilder.core import (
 from botbuilder.core.integration import aiohttp_error_middleware
 from botbuilder.schema import Activity, ActivityTypes
 
-from .bots import EchoBot
-from .config import DefaultConfig
+from bots import EchoBot
+from config import DefaultConfig
 
 CONFIG = DefaultConfig()
 

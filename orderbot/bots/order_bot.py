@@ -1,18 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from botbuilder.core import (
-    ActivityHandler,
-    TurnContext,
-    UserState,
-    CardFactory,
-    MessageFactory,
-)
 from botbuilder.schema import (
     ChannelAccount,
     HeroCard,
     CardImage,
-    CardAction,
     ActionTypes,
 )
 
@@ -20,10 +12,6 @@ from botbuilder.core import ActivityHandler, ConversationState, TurnContext, Use
 from botbuilder.dialogs import Dialog
 
 from helpers.dialog_helper import DialogHelper
-
-from data_models.unit import Unit
-from data_models.order import Order, OrderStatus
-from data_models.item import Item
 
 
 class OrderBot(ActivityHandler):

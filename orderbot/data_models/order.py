@@ -1,6 +1,6 @@
 import enum
 
-from data_models.item import Item
+from orderbot.data_models.item import Item
 
 
 class Order:

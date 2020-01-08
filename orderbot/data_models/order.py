@@ -17,19 +17,18 @@ class Order:
     def add_item(self, quantity: float, item: Item):
         """ Adds a new item or modifies one if is already present."""
         # is the item already in the list?
-
-        item.quantity = quantity
-        self.item_list.append(item)
-        # TODO: Add return type
-        return
+        if item in self.item_list:
+            item.quantity += quantity
+        else:
+            self.item_list.append(item)
 
     def remove_item(self, quantity, item):
         """ TODO: Add description for Order.remove_item """
         # TODO: Define the arithmetic, substitution or subtraction
-        item.quantity = quantity
-        self.item_list.remove(item)
-        # TODO: Add return type
-        return
+        if quantity == item.quantity:
+            self.item_list.remove(item)
+        else:
+            item.quantity -= quantity
 
     def confirm_order(self):
         """ TODO: Add description for Order.confirm_order """

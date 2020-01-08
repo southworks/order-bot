@@ -67,7 +67,6 @@ class OrderBot(ActivityHandler):
             if member.id != turn_context.activity.recipient.id:
                 reply = MessageFactory.text(
                     "Hello User! "
-                    + "Please type anything to get started."
                 )
 
                 await turn_context.send_activity(reply)

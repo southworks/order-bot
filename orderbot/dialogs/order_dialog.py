@@ -20,9 +20,7 @@ from botbuilder.dialogs.prompts import (
 from botbuilder.dialogs.choices import Choice
 from botbuilder.core import MessageFactory, UserState
 
-from data_models.order import Order
-from data_models.item import Item
-from data_models.unit import Unit
+from orderbot.data_models import Order, Unit, Item
 
 
 class OrderDialog(ComponentDialog):
@@ -58,20 +56,23 @@ class OrderDialog(ComponentDialog):
         unit_kg = Unit(2, "Kg")
 
         # create item 1
-        item1 = Item(product_id=1, item_id=1, quantity=1, description="Coca Cola 1.5 L", unit=unit)
+        item1 = Item(product_id=1, item_id=1, quantity=5, description="Chocolate", unit=unit)
 
         # TODO: Use a better alternative to add known names
-        item1.known_names.append("Coca Cola 1.5 L")
-        item1.known_names.append("Coca 1.5")
-        item1.known_names.append("CC 1500")
+        # item1.known_names.append(item1.description)
+        # item1.known_names.append("Coca 1.5")
+        # item1.known_names.append("CC 1500")
 
         # create item 2
-        item2 = Item(product_id=2, item_id=2, quantity=1, description="Yerba", unit=unit_kg)
+        item2 = Item(product_id=2, item_id=2, quantity=3, description="Yerba", unit=unit)
 
         # TODO: Use a better alternative to add known names
-        item2.known_names.append("Yerba 1Kg")
-        item2.known_names.append("Yerba Mate")
-        item2.known_names.append("Yerba MarcaX")
+        # item2.known_names.append(item2.description)
+        # item2.known_names.append("Yerba Mate")
+        # item2.known_names.append("Yerba MarcaX")
+
+        # create item 2
+        item3 = Item(product_id=3, item_id=3, quantity=2, description="Candy", unit=unit)
 
         # create order
         order: Order = Order(1)
@@ -87,6 +88,7 @@ class OrderDialog(ComponentDialog):
 
         self.current_order.add_item(item1.quantity, item1)
         self.current_order.add_item(item2.quantity, item2)
+        self.current_order.add_item(item3.quantity, item3)
 
         lista_estado_1 = "The items in the list are:\n" + self.current_order.show_items()
         # show list: 1 item
@@ -96,10 +98,12 @@ class OrderDialog(ComponentDialog):
         print(lista_estado_1)
 
         await step_context.context.send_activity(
-            MessageFactory.text("Now, we remove one item")
+            MessageFactory.text("Now, we remove items from item1 and item2, and add a few to item3")
         )
 
-        self.current_order.remove_item(item1.quantity, item1)
+        self.current_order.remove_item(2, item1)
+        self.current_order.remove_item(2, item2)
+        self.current_order.add_item(4, item3)
 
         # show list: should have less one item
 

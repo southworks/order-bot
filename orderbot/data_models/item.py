@@ -1,11 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from data_models.unit import Unit
+from .unit import Unit
 
 
 class Item:
-    """ TODO: Add description for Item class. """
+    """ Represents a generic item of an Order. """
     def __init__(self, product_id: int = 0, description: str = None, item_id: id = 0, known_names: str = None,
                  quantity: float = 0, unit: Unit = None):
         self.product_id = product_id
@@ -18,6 +18,9 @@ class Item:
         self.unit = unit
 
     def to_string(self) -> str:
-        """ returns a text representation of the Item object """
+        """ returns a text representation of the Item """
         # TODO: check if the description is ""
-        return "{0} {1} of {2}".format(self.quantity, self.unit.description, self.description)
+        if self.unit.description == "":
+            return "{0} {1}".format(self.quantity, self.description)
+        else:
+            return "{0} {1} of {2}".format(self.quantity, self.unit.description, self.description)

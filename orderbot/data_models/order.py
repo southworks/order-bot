@@ -3,7 +3,7 @@
 
 import enum
 from typing import List
-from data_models.item import Item
+from orderbot.data_models import Item
 
 
 class Order:
@@ -14,9 +14,10 @@ class Order:
         self.status = OrderStatus.New
 
     # TODO: see if the parameter quantity is removed here
-    def add_item(self, quantity, item):
-        """ TODO: Add description for Order.add_item """
-        # TODO: Define the arithmetic, substitution or addition
+    def add_item(self, quantity: float, item: Item):
+        """ Adds a new item or modifies one if is already present."""
+        # is the item already in the list?
+
         item.quantity = quantity
         self.item_list.append(item)
         # TODO: Add return type

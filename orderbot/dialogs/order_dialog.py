@@ -58,20 +58,20 @@ class OrderDialog(ComponentDialog):
         unit_kg = Unit(2, "Kg")
 
         # create item 1
-        item1 = Item(product_id=1, item_id=1, quantity=1, description="Producto1", unit=unit)
+        item1 = Item(product_id=1, item_id=1, quantity=1, description="Coca Cola 1.5 L", unit=unit)
 
         # TODO: Use a better alternative to add known names
-        item1.known_names.append("Producto1")
-        item1.known_names.append("Producto 1")
-        item1.known_names.append("Prod 1")
+        item1.known_names.append("Coca Cola 1.5 L")
+        item1.known_names.append("Coca 1.5")
+        item1.known_names.append("CC 1500")
 
         # create item 2
-        item2 = Item(product_id=2, item_id=2, quantity=1, description="Producto2", unit=unit_kg)
+        item2 = Item(product_id=2, item_id=2, quantity=1, description="Yerba", unit=unit_kg)
 
         # TODO: Use a better alternative to add known names
-        item2.known_names.append("Producto2")
-        item2.known_names.append("Producto 2")
-        item2.known_names.append("Prod 2")
+        item2.known_names.append("Yerba 1Kg")
+        item2.known_names.append("Yerba Mate")
+        item2.known_names.append("Yerba MarcaX")
 
         # create order
         order: Order = Order(1)

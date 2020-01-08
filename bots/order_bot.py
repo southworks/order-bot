@@ -19,6 +19,7 @@ from botbuilder.schema import (
 from botbuilder.core import ActivityHandler, ConversationState, TurnContext, UserState, MessageFactory
 from botbuilder.dialogs import Dialog
 
+from dialogs import OrderDialog
 from helpers.dialog_helper import DialogHelper
 
 from data_models.unit import Unit
@@ -68,9 +69,8 @@ class OrderBot(ActivityHandler):
                     "Hello User! "
                     + "Please type anything to get started."
                 )
-                # TODO: Call to order object's items
-                msg = "The list is:"
-                await turn_context.send_activity(reply, msg)
+
+                await turn_context.send_activity(reply)
 
     async def on_message_activity(self, turn_context: TurnContext):
         """

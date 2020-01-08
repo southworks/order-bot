@@ -7,6 +7,7 @@ from data_models.item import Item
 
 
 class Order:
+    """ TODO: Add description for class Order """
     def __init__(self, order_id: int = 0):
         self.order_id = order_id
         self.item_list: List[Item] = list()

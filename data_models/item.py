@@ -11,7 +11,12 @@ class Item:
         self.product_id = product_id
         self.description = description
         self.item_id = item_id
+        if not known_names:
+            known_names = list()
         self.known_names = known_names
         self.quantity = quantity
         self.unit = unit
 
+    def to_string(self) -> str:
+        """ returns a text representation of the Item object """
+        return "{0} {1} of {2}".format(self.quantity, self.unit.description, self.description)

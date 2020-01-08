@@ -8,3 +8,6 @@ class Unit:
         self.unit_id = unit_id
         self.description = description
 
+    def to_string(self):
+        """ returns a text representation of the object """
+        return "{0} {1}".format(self.unit_id, self.description)

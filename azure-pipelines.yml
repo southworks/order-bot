@@ -26,7 +26,7 @@ jobs:
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        cd $(Build.SourcesDirectory)/libraries/functional-tests/functionaltestbot
+        cd $(Build.SourcesDirectory)/functional-tests/functionaltestbot
         chmod +x ./scripts/deploy_webapp.sh
         ./scripts/deploy_webapp.sh --appid $(botAppId) --password $(botAppPassword) -g $(resourceGroupName)
     continueOnError: false

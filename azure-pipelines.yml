@@ -22,7 +22,7 @@ jobs:
   - task: AzureCLI@2
     displayName: Provision, Deploy and run tests
     inputs:
-      azureSubscription: $(subscription)
+      azureSubscription: AzureSubscription
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |

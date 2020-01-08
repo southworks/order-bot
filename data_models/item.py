@@ -19,4 +19,5 @@ class Item:
 
     def to_string(self) -> str:
         """ returns a text representation of the Item object """
+        # TODO: check if the description is ""
         return "{0} {1} of {2}".format(self.quantity, self.unit.description, self.description)

@@ -11,7 +11,7 @@ class Order:
     def __init__(self, order_id: int = 0):
         self.order_id = order_id
         self.item_list: List[Item] = list()
-        self.status: OrderStatus
+        self.status = OrderStatus.New
 
     # TODO: see if the parameter quantity is removed here
     def add_item(self, quantity, item):
@@ -32,7 +32,7 @@ class Order:
 
     def confirm_order(self):
         """ TODO: Add description for Order.confirm_order """
-
+        self.status = OrderStatus.Confirmed
         return
 
     def to_string(self):
@@ -45,14 +45,15 @@ class Order:
         content = ""
         if len(self.item_list) == 0:
             content += "The list is empty."
+            return content
 
         for item in self.item_list:
-            content += item.to_string()
+            content += item.to_string() + "\n"
 
         return content
 
 
 class OrderStatus(enum.Enum):
     New = 0
-    Pending = 1
+    InProgress = 1
     Confirmed = 2

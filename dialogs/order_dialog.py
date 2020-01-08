@@ -54,7 +54,7 @@ class OrderDialog(ComponentDialog):
         # testing 1
         # TODO: Move this Code to Tests
         # create unit
-        unit = Unit(1, "Unit")
+        unit = Unit(1)
         unit_kg = Unit(2, "Kg")
 
         # create item 1
@@ -81,17 +81,38 @@ class OrderDialog(ComponentDialog):
             self.current_order = order
 
         # Add the item to the list:
+        await step_context.context.send_activity(
+            MessageFactory.text("Adding two items")
+        )
+
         self.current_order.add_item(item1.quantity, item1)
         self.current_order.add_item(item2.quantity, item2)
 
+        lista_estado_1 = "The items in the list are:\n" + self.current_order.show_items()
         # show list: 1 item
-        print(order.show_items())
+        await step_context.context.send_activity(
+            MessageFactory.text(lista_estado_1)
+        )
+        print(lista_estado_1)
+
+        await step_context.context.send_activity(
+            MessageFactory.text("Now, we remove one item")
+        )
 
         self.current_order.remove_item(item1.quantity, item1)
 
         # show list: should have less one item
-        print(order.show_items())
 
+        lista_estado_2 = "The items in the list are:\n" + self.current_order.show_items()
+
+        print(lista_estado_2)
+        # show list: 1 item
+
+        await step_context.context.send_activity(
+             MessageFactory.text(lista_estado_2)
+        )
+
+        # return await step_context.
         return await step_context.prompt(
             ChoicePrompt.__name__,
             PromptOptions(

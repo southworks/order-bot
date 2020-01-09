@@ -26,7 +26,7 @@ jobs:
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        cd $(Build.SourcesDirectory)/functional-tests/functionaltestbot
+        cd $(Build.SourcesDirectory)/adapter/functional-tests/functionaltestbot
         chmod +x ./scripts/deploy_webapp.sh
         ./scripts/deploy_webapp.sh
     continueOnError: false

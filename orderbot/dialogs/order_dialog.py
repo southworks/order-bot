@@ -119,6 +119,7 @@ class OrderDialog(ComponentDialog):
             if step_context.options
             else "What can I help you with today?"
         )
+
         prompt_message = MessageFactory.text(
             message_text, message_text
         )
@@ -164,8 +165,10 @@ class OrderDialog(ComponentDialog):
         lista_estado_3 = "The items in the list are:\n" + self.current_order.show_items()
         print(lista_estado_3)
 
-        await step_context.context.send_activity(
-             MessageFactory.text(lista_estado_3)
+        prompt_message = MessageFactory.text(lista_estado_3)
+
+        return await step_context.prompt(
+            TextPrompt.__name__, PromptOptions(prompt=prompt_message)
         )
 
         # if step_context.result.value == 'Portfolio':
@@ -225,8 +228,6 @@ class OrderDialog(ComponentDialog):
         #     await step_context.context.send_activity(
         #         MessageFactory.text(f"Some day, when the sun is bright in the sky and all the backlog tasks are completed, I will be able to give you help. Sorry.")
         #     )
-
-        return await step_context.end_dialog()
 
     async def third_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
         """ TODO: Add description for OrderDialog.second_step """

@@ -130,7 +130,7 @@ class OrderDialog(ComponentDialog):
             New step that interprets the user intent, using a split and invoking add and remove
         """
         step_context.values["input"] = step_context.result
-        query = step_context.result
+        query = str(step_context.result)
 
         splitted = query.split()
 
@@ -150,11 +150,14 @@ class OrderDialog(ComponentDialog):
         item_x = None
 
         # I dont know if this is going to work
-        itm = list(filter(lambda item: item.description == splitted[2], self.current_order.item_list))
+        item = list(filter(lambda itm: itm.description == splitted[2], self.current_order.item_list))
+        if not item:
+            item = Item(product_id=self.current_order.item_list[-1].product_id + 1, description=splitted[2],
+                        item_id=self.current_order.item_list[-1].item_id, quantity=int(splitted[1]), unit=unit)
         if splitted[0] == 'Add':
-            self.current_order.add_item(float(splitted[1]), itm[0])
+            self.current_order.add_item(float(splitted[1]), item[0] if type(item) is list else item)
         elif splitted[0] == 'Remove':
-            self.current_order.remove_item(float(splitted[1]), itm[0])
+            self.current_order.remove_item(float(splitted[1]), item[0])
 
         lista_estado_3 = "The items in the list are:\n" + self.current_order.show_items()
         print(lista_estado_3)

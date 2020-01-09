@@ -3,7 +3,12 @@
 
 import enum
 from typing import List
+
+from botbuilder.core import CardFactory
+from botbuilder.schema import Attachment
+
 from orderbot.data_models import Item
+import json
 
 
 class Order:
@@ -52,6 +57,159 @@ class Order:
             content += item.to_string() + "\n"
 
         return content
+
+    def create_table_style_card(self) -> Attachment:
+        # parse through the list and show every element in a row
+        # return CardFactory.adaptive_card(ADAPTIVE_CARD_CONTENT)
+        PROTOTYPE_CARD_REAL = {
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "type": "AdaptiveCard",
+            "version": "1.0",
+            "body": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "weight": "bolder",
+                                    "text": "Quantity"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "separator": True,
+                                    "text": "5"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "separator": False,
+                                    "text": "3"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "separator": False,
+                                    "text": "2"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "weight": "bolder",
+                                    "text": "Item"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "separator": True,
+                                    "text": "Chocolate"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "separator": False,
+                                    "text": "Yerba"
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "separator": False,
+                                    "text": "Candy"
+                                }
+                            ]
+                        },
+                    ]
+                }
+            ]
+        }
+
+        card = PROTOTYPE_CARD_REAL
+
+        return Attachment(
+            content_type=CardFactory.content_types.adaptive_card, content=card
+        )
+
+    def create_table_style_card_2(self) -> Attachment:
+        card = Order.get_headers(self)
+        card += Order.get_cells_quantity(self)
+        card += Order.get_cells_description(self)
+        card += Order.get_bottom(self)
+        # card = card.replace("'", '"')
+        # card = card.replace("True", 'true')
+
+        # printing original string
+        print("The original string : " + str(card))
+
+        # using json.loads()
+        # convert dictionary string to dictionary
+        res = json.loads(card)
+
+        return Attachment(
+            content_type=CardFactory.content_types.adaptive_card, content=res
+        )
+
+    def get_headers(self) -> str:
+        rows_text: str = ""
+        rows_text += "{"
+
+        rows_text += "'$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',"
+        rows_text += "'type': 'AdaptiveCard',"
+        rows_text += "'version': '1.0',"
+        rows_text += "'body': [{"
+        rows_text += "'type': 'ColumnSet',"
+        rows_text += "'columns': ["
+        return rows_text
+
+    def get_cells_quantity(self) -> str:
+        rows_text: str = ""
+
+        rows_text += "{"
+        rows_text += "'type': 'Column', 'items': ["
+
+        # header
+        rows_text += "{"
+        rows_text += "'type': 'TextBlock', 'separator': True, 'text': '{0}'".format("Quantity")
+        rows_text += "},"
+
+        for item in self.item_list:
+            rows_text += "{"
+            rows_text += "'type': 'TextBlock', 'separator': False, 'text': '{0}'".format(str(item.quantity))
+            rows_text += "},"
+
+        # remove last trailing comma
+        rows_text = rows_text.rstrip(',')
+        rows_text += "]}"
+        rows_text += ","
+
+        return rows_text
+
+    def get_cells_description(self) -> str:
+        rows_text: str = ""
+
+        rows_text += "{"
+        rows_text += "'type': 'Column', 'items': ["
+
+        # header
+        rows_text += "{"
+        rows_text += "'type': 'TextBlock', 'separator': False, 'text': '{0}'".format("Item")
+        rows_text += "},"
+
+        for item in self.item_list:
+            rows_text += "{"
+            rows_text += "'type': 'TextBlock', 'separator': True, 'text': '{0}'".format(item.description)
+            rows_text += "},"
+
+        # remove last trailing comma
+        rows_text = rows_text.rstrip(',')
+        rows_text += "]}"
+
+        return rows_text
+
+    def get_bottom(self) -> str:
+        rows_text: str = ""
+        rows_text += "]}]}"
+        return rows_text
 
 
 class OrderStatus(enum.Enum):

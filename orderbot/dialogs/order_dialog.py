@@ -21,6 +21,7 @@ from botbuilder.dialogs.choices import Choice
 from botbuilder.core import MessageFactory, UserState
 
 from orderbot.data_models import Order, Unit, Item
+from orderbot.helpers.activity_helper import create_activity_reply
 
 
 class OrderDialog(ComponentDialog):
@@ -81,11 +82,6 @@ class OrderDialog(ComponentDialog):
             self.order_list.append(order)
             self.current_order = order
 
-        # # Add the item to the list:
-        # await step_context.context.send_activity(
-        #     MessageFactory.text("Adding two items")
-        # )
-
         self.current_order.item_list.clear()
 
         self.current_order.add_item(item1.quantity, item1)
@@ -106,25 +102,6 @@ class OrderDialog(ComponentDialog):
             lista_estado
         )
 
-        #
-        # self.current_order.remove_item(2, item1)
-        # self.current_order.remove_item(2, item2)
-        # self.current_order.add_item(4, item3)
-        #
-        # lista_estado_2 = "The items in the list are:\n" + self.current_order.show_items()
-        #
-        # print(lista_estado_2)
-        #
-        # await step_context.context.send_activity(
-        #      MessageFactory.text(lista_estado_2)
-        # )
-        #
-        # message_text = (
-        #     str(step_context.options)
-        #     if step_context.options
-        #     else "What can I help you with today?"
-        # )
-        #
         return await step_context.prompt(
             TextPrompt.__name__, PromptOptions(prompt=prompt_message)
         )
@@ -138,19 +115,6 @@ class OrderDialog(ComponentDialog):
 
         if "Confirm" not in query:
             splitted = query.split()
-
-            # having the splitted array:
-            # await step_context.context.send_activity(
-            #     MessageFactory.text("Your action is: " + splitted[0])
-            # )
-            #
-            # await step_context.context.send_activity(
-            #     MessageFactory.text("Your quantity is: " + splitted[1])
-            # )
-            #
-            # await step_context.context.send_activity(
-            #     MessageFactory.text("Your Item is: " + splitted[2])
-            # )
             unit = Unit(1)
 
             # I dont know if this is going to work
@@ -170,15 +134,44 @@ class OrderDialog(ComponentDialog):
                 )
 
             lista_estado_3 = "The items in the list are:\n" + self.current_order.show_items()
-            print(lista_estado_3)
-
+            # ------------------------
+            # card = Order.create_table_style_card(self.current_order)
+            #
+            # response = create_activity_reply(
+            #     step_context.context.activity, "", "", [card]
+            # )
+            # await step_context.context.send_activity(response)
+            # ------------------------
+            # TODO: Reactivate and Replace card with only text with this dynamic one
+            # card_2 = Order.create_table_style_card_2(self.current_order)
+            #
+            # response = create_activity_reply(
+            #     step_context.context.activity, "", "", [card_2]
+            # )
+            # await step_context.context.send_activity(response)
+            # ------------------------
+            # mini test partial
+            # test_str = Order.get_headers(self.current_order)
+            # test_str += Order.get_cells_quantity(self.current_order)
+            # test_str += Order.get_cells_description(self.current_order)
+            # test_str += Order.get_bottom(self.current_order)
+            # test_str = test_str.replace("'", '"')
+            # print(test_str)
+            # ------------------------
             prompt_message = MessageFactory.text(lista_estado_3)
-
             await step_context.prompt(
                 TextPrompt.__name__, PromptOptions(prompt=prompt_message)
             )
+            # TODO: Fix here, see something alternative
+            # await self.interpret_user_intention(step_context)
 
-            await self.interpret_user_intention(step_context)
+            # WaterfallStep always finishes with the end of the Waterfall or
+            # with another dialog; here it is a Prompt Dialog.
+            return await step_context.prompt(
+                ConfirmPrompt.__name__,
+                PromptOptions(prompt=MessageFactory.text("Is this ok?")),
+            )
+
         else:
             return await step_context.prompt(
                 ConfirmPrompt.__name__,
@@ -188,7 +181,10 @@ class OrderDialog(ComponentDialog):
     async def third_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
         """ TODO: Add description for OrderDialog.second_step """
         if not step_context.result:
-            await self.interpret_user_intention(step_context)
+            disable_warning = 1
+            # TODO: Fix here, see something alternative
+            # await self.interpret_user_intention(step_context)
+            return await step_context.end_dialog()
         else:
             await step_context.context.send_activity(
                 MessageFactory.text("The order was confirmed!")
@@ -196,16 +192,9 @@ class OrderDialog(ComponentDialog):
             await step_context.context.send_activity(
                 MessageFactory.text("Thank you!")
             )
-            await step_context.context.send_activity(
-                MessageFactory.text("Bye!")
-            )
 
-            return await step_context.end_dialog()
-            # return_response = "Bye!"
-            #
-            # await step_context.context.send_activity(
-            #     MessageFactory.text(return_response)
-            # )
-            #
-            # return await step_context.end_dialog()
+        await step_context.context.send_activity(
+            MessageFactory.text("Bye!")
+        )
 
+        return await step_context.end_dialog()

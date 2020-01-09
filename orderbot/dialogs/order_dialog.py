@@ -85,6 +85,8 @@ class OrderDialog(ComponentDialog):
             MessageFactory.text("Adding two items")
         )
 
+        self.current_order.item_list.clear()
+
         self.current_order.add_item(item1.quantity, item1)
         self.current_order.add_item(item2.quantity, item2)
         self.current_order.add_item(item3.quantity, item3)

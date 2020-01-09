@@ -36,19 +36,18 @@ class OrderDialog(ComponentDialog):
                 WaterfallDialog.__name__,
                 [
                     self.options_step,
-                    self.second_step
+                    self.interpret_user_intention,
+                    self.third_step
                 ],
             )
         )
         self.add_dialog(ChoicePrompt("options_step"))
-
+        self.add_dialog(TextPrompt("interpret_user_intention"))
         self.add_dialog(ChoicePrompt(ChoicePrompt.__name__))
         self.initial_dialog_id = WaterfallDialog.__name__
+        self.add_dialog(TextPrompt(TextPrompt.__name__))
 
-    async def options_step(
-        self, step_context: WaterfallStepContext
-    ) -> DialogTurnResult:
-
+    async def options_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
         # testing 1
         # TODO: Move this Code to Tests
         # create unit
@@ -105,27 +104,132 @@ class OrderDialog(ComponentDialog):
         self.current_order.remove_item(2, item2)
         self.current_order.add_item(4, item3)
 
-        # show list: should have less one item
-
         lista_estado_2 = "The items in the list are:\n" + self.current_order.show_items()
 
         print(lista_estado_2)
-        # show list: 1 item
 
         await step_context.context.send_activity(
              MessageFactory.text(lista_estado_2)
         )
 
-        # return await step_context.
-        return await step_context.prompt(
-            ChoicePrompt.__name__,
-            PromptOptions(
-                prompt=MessageFactory.text("Welcome! What can I help you with?"),
-                choices=[Choice("Add"), Choice("Remove"), Choice("Help")],
-            ),
+        message_text = (
+            str(step_context.options)
+            if step_context.options
+            else "What can I help you with today?"
+        )
+        prompt_message = MessageFactory.text(
+            message_text, message_text
         )
 
-    async def second_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
+        return await step_context.prompt(
+            TextPrompt.__name__, PromptOptions(prompt=prompt_message)
+        )
+
+    async def interpret_user_intention(self, step_context: WaterfallStepContext) -> DialogTurnResult:
+        """
+            New step that interprets the user intent, using a split and invoking add and remove
+        """
+        step_context.values["input"] = step_context.result
+        query = step_context.result
+
+        splitted = query.split()
+        print(splitted)
+
+        # having the splitted array:
+        await step_context.context.send_activity(
+            MessageFactory.text("Your action is:" + splitted[0])
+        )
+
+        await step_context.context.send_activity(
+            MessageFactory.text("Your quantity is:" + splitted[1])
+        )
+
+        await step_context.context.send_activity(
+            MessageFactory.text("Your Item is:" + splitted[2])
+        )
+
+        unit = Unit(1)
+        item_x = None
+
+        # I dont know if this is going to work
+        if splitted[0] == 'Add':
+            if splitted[2] == 'Chocolate':
+                item_x = Item(product_id=1, item_id=1, quantity=3, description="Chocolate", unit=unit)
+            elif splitted[2] == 'Candy':
+                item_x = Item(product_id=3, item_id=3, quantity=2, description="Candy", unit=unit)
+            elif splitted[2] == 'Yerba':
+                item_x = Item(product_id=2, item_id=2, quantity=3, description="Yerba", unit=unit)
+
+        self.current_order.add_item(float(splitted[1]), item_x)
+
+        lista_estado_3 = "The items in the list are:\n" + self.current_order.show_items()
+        print(lista_estado_3)
+
+        await step_context.context.send_activity(
+             MessageFactory.text(lista_estado_3)
+        )
+
+        # if step_context.result.value == 'Portfolio':
+        #     await step_context.context.send_activity(
+        #         MessageFactory.text(f"Very well, this is your portfolio.")
+        #     )
+        #     # await step_context.context.send_activity(
+        #     #     MessageFactory.text("We could and should use a Card here.")
+        #     # )
+        #
+        #     # Verify that the operation object has ALL the info needed.
+        #     card = self.create_table_style_card()
+        #
+        #     response = create_activity_reply(
+        #         step_context.context.activity, "", "", [card]
+        #     )
+        #     await step_context.context.send_activity(response)
+        #
+        #     img_result = self.portfolio.show()
+        #
+        #     # Replace this text for a CARD
+        #     await step_context.context.send_activity(
+        #        MessageFactory.text(self.portfolio.show())
+        #     )
+        #
+        #     # review if this can be deleted and dependant methods too
+        #     # reply = Activity(type=ActivityTypes.message)
+        #     # reply.text = "Portfolio image."
+        #     # reply.attachments = [self.get_plot_img()]
+        #     # await step_context.context.send_activity(reply)
+        #
+        #     # Portfolio distribution (cake)
+        #     reply_cake = Activity(type=ActivityTypes.message)
+        #     reply_cake.text = "Portfolio Distribution."
+        #     reply_cake.attachments = [self.get_cake_img()]
+        #     await step_context.context.send_activity(reply_cake)
+        #
+        #     # Here, the conversation can continue, or be terminated and reset
+        #     return await step_context.end_dialog()
+        #
+        # elif step_context.result.value == 'Trade':
+        #     await step_context.context.send_activity(
+        #         MessageFactory.text(f"Ok, you want to trade.")
+        #     )
+        #     return await step_context.prompt(
+        #         "text_prompt_input",
+        #         PromptOptions(prompt=MessageFactory.text("What do you want to buy or sell?")),
+        #     )
+        #     # Here we wait for a TextPrompt input, that should contain the user intent,
+        #     # like:
+        #     # Buy 25 MSFT for $ 120
+        #
+        #     # here, we can also have a Choice Prompt based on our current holdings.
+        #     # that way, the user intent, is getting narrowed in a interactive fashion.
+        #
+        # elif step_context.result.value == 'Help':
+        #     await step_context.context.send_activity(
+        #         MessageFactory.text(f"Some day, when the sun is bright in the sky and all the backlog tasks are completed, I will be able to give you help. Sorry.")
+        #     )
+
+        return await step_context.end_dialog()
+
+    async def third_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
         """ TODO: Add description for OrderDialog.second_step """
         return_response = "Bye!"
 

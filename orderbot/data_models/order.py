@@ -18,7 +18,7 @@ class Order:
             Else, it updates the item.
         """
         if item in self.item_list:
-            item.quantity += quantity
+            item.quantity += int(quantity) if item.unit.description == "" else quantity
         else:
             self.item_list.append(item)
 
@@ -26,10 +26,10 @@ class Order:
         """ Removes items from the list if the remaining quantity is 0
             If quantity is greater than 0, then the item is modified
         """
-        if quantity == item.quantity:
+        if quantity >= item.quantity:
             self.item_list.remove(item)
         else:
-            item.quantity -= quantity
+            item.quantity -= int(quantity) if item.unit.description == "" else quantity
 
     def confirm_order(self):
         """ Confirms the Order """

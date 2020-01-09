@@ -68,6 +68,10 @@ async def messages(req: Request) -> Response:
     else:
         return Response(status=415)
 
+    # Enable Slack Event - Code to pass the Slack Request Challenge
+    if body["challenge"]:
+        return Response(body["challenge"], status=201)
+
     activity = Activity().deserialize(body)
     auth_header = req.headers["Authorization"] if "Authorization" in req.headers else ""
 

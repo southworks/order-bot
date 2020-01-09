@@ -133,34 +133,28 @@ class OrderDialog(ComponentDialog):
         query = step_context.result
 
         splitted = query.split()
-        print(splitted)
 
         # having the splitted array:
         await step_context.context.send_activity(
-            MessageFactory.text("Your action is:" + splitted[0])
+            MessageFactory.text("Your action is: " + splitted[0])
         )
 
         await step_context.context.send_activity(
-            MessageFactory.text("Your quantity is:" + splitted[1])
+            MessageFactory.text("Your quantity is: " + splitted[1])
         )
 
         await step_context.context.send_activity(
-            MessageFactory.text("Your Item is:" + splitted[2])
+            MessageFactory.text("Your Item is: " + splitted[2])
         )
-
         unit = Unit(1)
         item_x = None
 
         # I dont know if this is going to work
+        itm = list(filter(lambda item: item.description == splitted[2], self.current_order.item_list))
         if splitted[0] == 'Add':
-            if splitted[2] == 'Chocolate':
-                item_x = Item(product_id=1, item_id=1, quantity=3, description="Chocolate", unit=unit)
-            elif splitted[2] == 'Candy':
-                item_x = Item(product_id=3, item_id=3, quantity=2, description="Candy", unit=unit)
-            elif splitted[2] == 'Yerba':
-                item_x = Item(product_id=2, item_id=2, quantity=3, description="Yerba", unit=unit)
-
-        self.current_order.add_item(float(splitted[1]), item_x)
+            self.current_order.add_item(float(splitted[1]), itm[0])
+        elif splitted[0] == 'Remove':
+            self.current_order.remove_item(float(splitted[1]), itm[0])
 
         lista_estado_3 = "The items in the list are:\n" + self.current_order.show_items()
         print(lista_estado_3)

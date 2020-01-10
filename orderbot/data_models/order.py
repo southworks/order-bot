@@ -23,8 +23,15 @@ class Order:
         """ Adds items to the list if there is no match
             Else, it updates the item.
         """
-        if item in self.item_list:
-            item.quantity += int(quantity) if item.unit.description == "" else quantity
+        if self.item_list:
+            if item in self.item_list:
+                for i in range(0, len(self.item_list)):
+                    if item.product_id == self.item_list[i].product_id:
+                        item.quantity += int(quantity) if item.unit.description == "" else quantity
+                    else:
+                        self.item_list.append(item)
+            else:
+                self.item_list.append(item)
         else:
             self.item_list.append(item)
 

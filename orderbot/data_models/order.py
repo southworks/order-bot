@@ -136,6 +136,47 @@ class Order:
             content_type=CardFactory.content_types.adaptive_card, content=card
         )
 
+    def experimental_card(self) -> Attachment:
+        import requests
+
+        from pyadaptivecards.card import AdaptiveCard
+        from pyadaptivecards.inputs import Text, Number
+        from pyadaptivecards.components import TextBlock
+        from pyadaptivecards.actions import Submit
+
+        # not necessary for now ----
+        auth_token = "<INSERT_AUTH_TOKEN_HERE>"
+        headers = {
+            "Authorization": "Bearer " + auth_token
+        }
+        # ----
+
+        # Create card
+        greeting = TextBlock("Hey hello there! I am a adaptive card")
+        first_name = Text('first_name', placeholder="First Name")
+        age = Number('age', placeholder="Age")
+
+        submit = Submit(title="Send me!")
+
+        card = AdaptiveCard(body=[greeting, first_name, age], actions=[submit])
+
+        # Create attachment
+        attachment = {
+            "contentType": "application/vnd.microsoft.card.adaptive",
+            "content": card.to_dict()
+        }
+
+        # Create payload for the webrequest
+        # payload = {
+        #     "roomId": "<INSERT_YOUR_ROOM_HERE>",
+        #     "attachments": [attachment],
+        #     "text": "Fallback Text"
+        # }
+
+        # response = requests.post("https://api.ciscospark.com/v1/messages", headers=headers, data=payload)
+        return attachment
+
+
     # def create_table_style_card_2(self) -> Attachment:
     #     # card = Order.get_headers(self)
     #

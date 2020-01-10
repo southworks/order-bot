@@ -62,7 +62,7 @@ class OrderDialog(ComponentDialog):
 
             # create items
             item1 = Item(product_id=1, item_id=1, quantity=5, description="Chocolate", unit=unit)
-            item2 = Item(product_id=2, item_id=2, quantity=3, description="Yerba", unit=unit)
+            item2 = Item(product_id=2, item_id=2, quantity=3, description="Yerba", unit=unit_kg)
             item3 = Item(product_id=3, item_id=3, quantity=2, description="Candy", unit=unit)
 
             # create order
@@ -105,12 +105,13 @@ class OrderDialog(ComponentDialog):
         action = DialogHelper.recognize_intention(query)
         splitted = query.split()
 
+        item = next((x for x in self.current_order.item_list if x.description.lower() == splitted[2].lower()), None)
+
         action.execute(float(splitted[1]), self.current_order)
 
         if "confirm" not in query:
             unit = Unit(1)
 
-            item = next((x for x in self.current_order.item_list if x.description.lower() == splitted[2].lower()), None)
             if not item:
                 item = Item(product_id=self.current_order.item_list[-1].product_id + 1, description=splitted[2],
                             item_id=self.current_order.item_list[-1].item_id + 1, quantity=int(splitted[1]), unit=unit)

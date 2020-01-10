@@ -86,13 +86,20 @@ class OrderDialog(ComponentDialog):
 
         lista_estado = "The items in the list are:\n" + self.current_order.show_items()
         # --------------------------------------
+        #
+        # card = Order.experimental_card(self.current_order)
+        #
+        # response = create_activity_reply(
+        #     step_context.context.activity, "", "", [card]
+        # )
+        # await step_context.context.send_activity(response)
+        # --------------------------------------
+        card2 = Order.experimental_card_2(self.current_order)
 
-        card = Order.experimental_card(self.current_order)
-
-        response = create_activity_reply(
-            step_context.context.activity, "", "", [card]
+        response2 = create_activity_reply(
+            step_context.context.activity, "", "", [card2]
         )
-        await step_context.context.send_activity(response)
+        await step_context.context.send_activity(response2)
         # --------------------------------------
 
         prompt_message = MessageFactory.text(

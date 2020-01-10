@@ -176,6 +176,37 @@ class Order:
         # response = requests.post("https://api.ciscospark.com/v1/messages", headers=headers, data=payload)
         return attachment
 
+    def experimental_card_2(self) -> Attachment:
+        from pyadaptivecards.card import AdaptiveCard
+        from pyadaptivecards.inputs import Text, Number
+        from pyadaptivecards.components import TextBlock
+        from pyadaptivecards.actions import Submit
+
+        body = []
+        # Create card
+        greeting = TextBlock("Current order")
+        body.append(greeting)
+
+        for item in self.item_list:
+            body.append(Text(item.product_id, placeholder=str(item.quantity) + " " + item.description))
+
+        # description = Text(self.item_list[0].product_id, placeholder=self.item_list[0].description)
+        # description2 = Text(self.item_list[1].product_id, placeholder=self.item_list[1].description)
+        # description3 = Text(self.item_list[2].product_id, placeholder=self.item_list[2].description)
+
+        # submit = Submit(title="Ok")
+
+        # card = AdaptiveCard(body=body, actions=[submit])
+        card = AdaptiveCard(body=body)
+
+        # Create attachment
+        attachment = {
+            "contentType": "application/vnd.microsoft.card.adaptive",
+            "content": card.to_dict()
+        }
+
+        return attachment
+
 
     # def create_table_style_card_2(self) -> Attachment:
     #     # card = Order.get_headers(self)

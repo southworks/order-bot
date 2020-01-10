@@ -11,6 +11,7 @@ class DefaultConfig:
     """ Bot Configuration """
     import os
 
-    PORT = 3978
+    PORT = 8080
     APP_ID = os.environ.get("MicrosoftAppId", "")
     APP_PASSWORD = os.environ.get("MicrosoftAppPassword", "")
+    SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN")

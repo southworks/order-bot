@@ -70,7 +70,7 @@ class OrderDialog(ComponentDialog):
                 self.order_list.append(order)
                 self.current_order = order
 
-            # self.current_order.item_list.clear()
+            self.current_order.item_list.clear()
 
             self.current_order.add_item(item1.quantity, item1)
             self.current_order.add_item(item2.quantity, item2)

@@ -28,8 +28,6 @@ class Order:
                 for i in range(0, len(self.item_list)):
                     if item.product_id == self.item_list[i].product_id:
                         item.quantity += int(quantity) if item.unit.description == "" else quantity
-                    else:
-                        self.item_list.append(item)
             else:
                 self.item_list.append(item)
         else:

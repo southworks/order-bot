@@ -28,8 +28,6 @@ from data_models.item import Item
 
 
 class OrderBot(ActivityHandler):
-    """ TODO: Add description for OrderBot class """
-
     def __init__(
         self,
         conversation_state: ConversationState,
@@ -68,7 +66,6 @@ class OrderBot(ActivityHandler):
                 reply = MessageFactory.text(
                     "Hello User! "
                 )
-
                 await turn_context.send_activity(reply)
 
     async def on_message_activity(self, turn_context: TurnContext):

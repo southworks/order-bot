@@ -39,6 +39,7 @@ class OrderDialog(ComponentDialog):
                     self.options_step,
                     self.interpret_user_intention,
                     self.third_step
+
                 ],
             )
         )

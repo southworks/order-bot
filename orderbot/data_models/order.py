@@ -58,7 +58,7 @@ class Order:
 
         return content
 
-    def create_table_style_card(self) -> Attachment:
+    def get_table_style_card(self) -> Attachment:
         # parse through the list and show every element in a row
         # return CardFactory.adaptive_card(ADAPTIVE_CARD_CONTENT)
         PROTOTYPE_CARD_REAL = {
@@ -130,24 +130,39 @@ class Order:
             content_type=CardFactory.content_types.adaptive_card, content=card
         )
 
-    def create_table_style_card_2(self) -> Attachment:
-        card = Order.get_headers(self)
-        card += Order.get_cells_quantity(self)
-        card += Order.get_cells_description(self)
-        card += Order.get_bottom(self)
-        # card = card.replace("'", '"')
-        # card = card.replace("True", 'true')
-
-        # printing original string
-        print("The original string : " + str(card))
-
-        # using json.loads()
-        # convert dictionary string to dictionary
-        res = json.loads(card)
-
-        return Attachment(
-            content_type=CardFactory.content_types.adaptive_card, content=res
-        )
+    # def create_table_style_card_2(self) -> Attachment:
+    #     # card = Order.get_headers(self)
+    #
+    #     base_dict = {
+    #         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    #         "type": "AdaptiveCard",
+    #         "version": "1.0",
+    #         "body": []
+    #     }
+    #
+    #     # rare_card = '{\'$schema\': \'http://adaptivecards.io/schemas/adaptive-card.json\',\'type\': \'AdaptiveCard\',\'version\': \'1.0\'}'
+    #     # resx = json.loads(card)
+    #
+    #     card += "'body': [{"
+    #     card += "'type': 'ColumnSet',"
+    #     card += "'columns': ["
+    #
+    #     card += Order.get_cells_quantity(self)
+    #     card += Order.get_cells_description(self)
+    #     card += Order.get_bottom(self)
+    #     # card = card.replace("'", '"')
+    #     # card = card.replace("True", 'true')
+    #
+    #     # printing original string
+    #     print("The original string : " + str(card))
+    #
+    #     # using json.loads()
+    #     # convert dictionary string to dictionary
+    #     res = json.loads(card)
+    #
+    #     return Attachment(
+    #         content_type=CardFactory.content_types.adaptive_card, content=res
+    #     )
 
     def get_headers(self) -> str:
         rows_text: str = ""
@@ -156,9 +171,11 @@ class Order:
         rows_text += "'$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',"
         rows_text += "'type': 'AdaptiveCard',"
         rows_text += "'version': '1.0',"
-        rows_text += "'body': [{"
-        rows_text += "'type': 'ColumnSet',"
-        rows_text += "'columns': ["
+        rows_text = rows_text.rstrip(',')
+
+        # rows_text += "'body': [{"
+        # rows_text += "'type': 'ColumnSet',"
+        # rows_text += "'columns': ["
         return rows_text
 
     def get_cells_quantity(self) -> str:

@@ -50,29 +50,14 @@ class OrderDialog(ComponentDialog):
         self.add_dialog(TextPrompt(TextPrompt.__name__))
 
     async def options_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
-        # testing 1
         # TODO: Move this Code to Tests
-        # create unit
+        # create units
         unit = Unit(1)
         unit_kg = Unit(2, "Kg")
 
-        # create item 1
+        # create items
         item1 = Item(product_id=1, item_id=1, quantity=5, description="Chocolate", unit=unit)
-
-        # TODO: Use a better alternative to add known names
-        # item1.known_names.append(item1.description)
-        # item1.known_names.append("Coca 1.5")
-        # item1.known_names.append("CC 1500")
-
-        # create item 2
         item2 = Item(product_id=2, item_id=2, quantity=3, description="Yerba", unit=unit)
-
-        # TODO: Use a better alternative to add known names
-        # item2.known_names.append(item2.description)
-        # item2.known_names.append("Yerba Mate")
-        # item2.known_names.append("Yerba MarcaX")
-
-        # create item 2
         item3 = Item(product_id=3, item_id=3, quantity=2, description="Candy", unit=unit)
 
         # create order
@@ -117,7 +102,6 @@ class OrderDialog(ComponentDialog):
             splitted = query.split()
             unit = Unit(1)
 
-            # I dont know if this is going to work
             item = list(filter(lambda itm: itm.description == splitted[2], self.current_order.item_list))
             if not item:
                 item = Item(product_id=self.current_order.item_list[-1].product_id + 1, description=splitted[2],
@@ -134,43 +118,21 @@ class OrderDialog(ComponentDialog):
                 )
 
             lista_estado_3 = "The items in the list are:\n" + self.current_order.show_items()
-            # ------------------------
-            # card = Order.create_table_style_card(self.current_order)
+            # ------------------------------------------------
+            # card = Order.get_table_style_card(self.current_order)
             #
             # response = create_activity_reply(
             #     step_context.context.activity, "", "", [card]
             # )
             # await step_context.context.send_activity(response)
-            # ------------------------
-            # TODO: Reactivate and Replace card with only text with this dynamic one
-            # card_2 = Order.create_table_style_card_2(self.current_order)
-            #
-            # response = create_activity_reply(
-            #     step_context.context.activity, "", "", [card_2]
-            # )
-            # await step_context.context.send_activity(response)
-            # ------------------------
-            # mini test partial
-            # test_str = Order.get_headers(self.current_order)
-            # test_str += Order.get_cells_quantity(self.current_order)
-            # test_str += Order.get_cells_description(self.current_order)
-            # test_str += Order.get_bottom(self.current_order)
-            # test_str = test_str.replace("'", '"')
-            # print(test_str)
-            # ------------------------
+            # ------------------------------------------------
+
             prompt_message = MessageFactory.text(lista_estado_3)
-            await step_context.prompt(
+            return await step_context.prompt(
                 TextPrompt.__name__, PromptOptions(prompt=prompt_message)
             )
-            # TODO: Fix here, see something alternative
-            # await self.interpret_user_intention(step_context)
-
-            # WaterfallStep always finishes with the end of the Waterfall or
-            # with another dialog; here it is a Prompt Dialog.
-            return await step_context.prompt(
-                ConfirmPrompt.__name__,
-                PromptOptions(prompt=MessageFactory.text("Is this ok?")),
-            )
+            # TODO: test this
+            # return await self.interpret_user_intention(step_context)
 
         else:
             return await step_context.prompt(
@@ -180,11 +142,15 @@ class OrderDialog(ComponentDialog):
 
     async def third_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
         """ TODO: Add description for OrderDialog.second_step """
-        if not step_context.result:
-            disable_warning = 1
+        if not step_context.result and "Confirm" not in step_context.values["input"]:
+            prompt_message = MessageFactory.text("Well I have to go, bye!")
+            await step_context.prompt(
+                TextPrompt.__name__, PromptOptions(prompt=prompt_message)
+            )
+
+            return await step_context.end_dialog()
             # TODO: Fix here, see something alternative
             # await self.interpret_user_intention(step_context)
-            return await step_context.end_dialog()
         else:
             await step_context.context.send_activity(
                 MessageFactory.text("The order was confirmed!")

@@ -16,11 +16,8 @@ from botbuilder.core import (
 )
 from botbuilder.schema import Activity, ActivityTypes
 
-# Create the loop and Flask app
-
-# TODO: Resolve these imports
-from orderbot.bots.order_bot import OrderBot
-from orderbot.dialogs.order_dialog import OrderDialog
+from bots import OrderBot
+from dialogs import OrderDialog
 
 LOOP = asyncio.get_event_loop()
 APP = Flask(__name__, instance_relative_config=True)

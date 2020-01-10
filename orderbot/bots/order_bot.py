@@ -19,6 +19,7 @@ from botbuilder.schema import (
 from botbuilder.core import ActivityHandler, ConversationState, TurnContext, UserState, MessageFactory
 from botbuilder.dialogs import Dialog
 
+from dialogs import OrderDialog
 from helpers.dialog_helper import DialogHelper
 
 from data_models.unit import Unit
@@ -27,14 +28,6 @@ from data_models.item import Item
 
 
 class OrderBot(ActivityHandler):
-    """
-    This Bot implementation can run any type of Dialog. The use of type parameterization is to allows multiple
-    different bots to be run at different endpoints within the same project. This can be achieved by defining distinct
-    Controller types each with dependency on distinct Bot types. The ConversationState is used by the Dialog system. The
-    UserState isn't, however, it might have been used in a Dialog implementation, and the requirement is that all
-    BotState objects are saved at the end of a turn.
-    """
-
     def __init__(
         self,
         conversation_state: ConversationState,
@@ -72,11 +65,8 @@ class OrderBot(ActivityHandler):
             if member.id != turn_context.activity.recipient.id:
                 reply = MessageFactory.text(
                     "Hello User! "
-                    + "Please type anything to get started."
                 )
-                # TODO: Call to order object's items
-                msg = "The list is:"
-                await turn_context.send_activity(reply, msg)
+                await turn_context.send_activity(reply)
 
     async def on_message_activity(self, turn_context: TurnContext):
         """

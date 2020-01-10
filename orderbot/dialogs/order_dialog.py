@@ -108,7 +108,7 @@ class OrderDialog(ComponentDialog):
         if "confirm" not in query:
             unit = Unit(1)
 
-            item = list(filter(lambda itm: itm.description == splitted[2], self.current_order.item_list))
+            item = next((x for x in self.current_order.item_list if x.description.lower() == splitted[2].lower()), None)
             if not item:
                 item = Item(product_id=self.current_order.item_list[-1].product_id + 1, description=splitted[2],
                             item_id=self.current_order.item_list[-1].item_id + 1, quantity=int(splitted[1]), unit=unit)
@@ -148,8 +148,8 @@ class OrderDialog(ComponentDialog):
 
     async def goodbye_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
         """ TODO: Add description for OrderDialog.second_step """
-        if not step_context.result and "Confirm" not in step_context.values["input"]:
-            prompt_message = MessageFactory.text("Well I have to go, bye!")
+        if "confirm" not in step_context.result.lower():
+            prompt_message = MessageFactory.text("I don't want to do that right now")
             await step_context.prompt(
                 TextPrompt.__name__, PromptOptions(prompt=prompt_message)
             )
@@ -157,7 +157,7 @@ class OrderDialog(ComponentDialog):
             return await step_context.end_dialog()
             # TODO: Fix here, see something alternative
             # await self.interpret_user_intention(step_context)
-        else:
+        elif 'confirm' in step_context.result.lower():
             await step_context.context.send_activity(
                 MessageFactory.text("The order was confirmed!")
             )

@@ -7,8 +7,9 @@ from typing import List
 from botbuilder.core import CardFactory
 from botbuilder.schema import Attachment
 
-from orderbot.data_models import Item
 import json
+
+from data_models import Item
 
 
 class Order:

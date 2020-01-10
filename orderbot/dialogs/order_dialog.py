@@ -23,6 +23,8 @@ from botbuilder.core import MessageFactory, UserState
 from orderbot.data_models import Order, Unit, Item
 from orderbot.helpers.activity_helper import create_activity_reply
 
+from helpers import DialogHelper
+
 
 class OrderDialog(ComponentDialog):
     """ TODO: Add description for OrderDialog class. """
@@ -38,7 +40,7 @@ class OrderDialog(ComponentDialog):
                 [
                     self.options_step,
                     self.interpret_user_intention,
-                    self.third_step
+                    self.goodbye_step
 
                 ],
             )
@@ -97,22 +99,25 @@ class OrderDialog(ComponentDialog):
             New step that interprets the user intent, using a split and invoking add and remove
         """
         step_context.values["input"] = step_context.result
-        query = str(step_context.result)
+        query = str(step_context.result).lower()
+        action = DialogHelper.recognize_intention(query)
+        splitted = query.split()
 
-        if "Confirm" not in query:
-            splitted = query.split()
+        action.execute(float(splitted[1]), self.current_order)
+
+        if "confirm" not in query:
             unit = Unit(1)
 
             item = list(filter(lambda itm: itm.description == splitted[2], self.current_order.item_list))
             if not item:
                 item = Item(product_id=self.current_order.item_list[-1].product_id + 1, description=splitted[2],
                             item_id=self.current_order.item_list[-1].item_id + 1, quantity=int(splitted[1]), unit=unit)
-            if splitted[0] == 'Add':
+            if splitted[0].lower() == 'add':
                 self.current_order.add_item(float(splitted[1]), item[0] if type(item) is list else item)
                 await step_context.context.send_activity(
                     MessageFactory.text(splitted[1] + " " + splitted[2] + " added!")
                 )
-            elif splitted[0] == 'Remove':
+            elif splitted[0].lower() == 'remove':
                 self.current_order.remove_item(float(splitted[1]), item[0])
                 await step_context.context.send_activity(
                     MessageFactory.text(splitted[1] + " " + splitted[2] + " removed!")
@@ -141,7 +146,7 @@ class OrderDialog(ComponentDialog):
                 PromptOptions(prompt=MessageFactory.text("You want to confirm this order?")),
             )
 
-    async def third_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
+    async def goodbye_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
         """ TODO: Add description for OrderDialog.second_step """
         if not step_context.result and "Confirm" not in step_context.values["input"]:
             prompt_message = MessageFactory.text("Well I have to go, bye!")

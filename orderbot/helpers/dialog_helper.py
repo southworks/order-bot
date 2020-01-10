@@ -4,8 +4,7 @@
 from botbuilder.core import StatePropertyAccessor, TurnContext
 from botbuilder.dialogs import Dialog, DialogSet, DialogTurnStatus
 
-from data_models import Action, Add, Remove, Confirm
-from dialogs import OrderDialog
+from orderbot.data_models import Add, Remove, Confirm
 
 
 class DialogHelper:

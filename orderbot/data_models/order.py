@@ -9,7 +9,7 @@ from botbuilder.schema import Attachment
 
 import json
 
-from data_models import Item
+from orderbot.data_models.item import Item
 
 
 class Order:

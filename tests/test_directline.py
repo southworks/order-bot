@@ -2,7 +2,7 @@ import os
 import json
 from unittest import TestCase
 
-from tests.directline_client import DirectLineClient
+from directline_client import DirectLineClient
 
 
 class PyBotTest(TestCase):

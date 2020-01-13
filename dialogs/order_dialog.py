@@ -14,8 +14,8 @@ from botbuilder.dialogs.prompts import (
 )
 from botbuilder.core import MessageFactory, UserState
 
+from helpers import DialogHelper
 from data_models import Unit, Item, Order, OrderStatus
-from helpers import activity_helper, DialogHelper
 
 
 class OrderDialog(ComponentDialog):
@@ -30,7 +30,11 @@ class OrderDialog(ComponentDialog):
         self.add_dialog(
             WaterfallDialog(
                 WaterfallDialog.__name__,
-                [self.options_step, self.interpret_user_intention, self.goodbye_step],
+                [
+                    self.options_step,
+                    self.interpret_user_intention,
+                    self.goodbye_step,
+                ],
             )
         )
         self.add_dialog(ChoicePrompt("options_step"))
@@ -47,17 +51,58 @@ class OrderDialog(ComponentDialog):
             # TODO: Move this Code to Tests
             # create units
             unit = Unit(1)
-            unit_kg = Unit(2, "Kg")
+            unit_gr = Unit(2, "Gr")
+            unit_kg = Unit(3, "Kg")
 
             # create items
             item1 = Item(
-                product_id=1, item_id=1, quantity=5, description="Chocolate", unit=unit
+                product_id=1,
+                item_id=1,
+                quantity=1,
+                description="Coca Cola",
+                unit=unit,
             )
             item2 = Item(
-                product_id=2, item_id=2, quantity=3, description="Yerba", unit=unit_kg
+                product_id=2,
+                item_id=2,
+                quantity=3,
+                description="Agua Mineral",
+                unit=unit,
             )
             item3 = Item(
-                product_id=3, item_id=3, quantity=2, description="Candy", unit=unit
+                product_id=3,
+                item_id=3,
+                weight=500,
+                description="Frutos Secos",
+                unit=unit_gr,
+            )
+            item4 = Item(
+                product_id=4,
+                item_id=4,
+                quantity=5,
+                description="Alfajor de Arroz",
+                unit=unit,
+            )
+            item5 = Item(
+                product_id=5,
+                item_id=5,
+                weight=500,
+                description="Banana",
+                unit=unit_gr,
+            )
+            item6 = Item(
+                product_id=6,
+                item_id=6,
+                weight=500,
+                description="Manzana",
+                unit=unit_gr,
+            )
+            item7 = Item(
+                product_id=7,
+                item_id=7,
+                weight=500,
+                description="Yerba Organica",
+                unit=unit_gr,
             )
 
             # create order
@@ -69,15 +114,17 @@ class OrderDialog(ComponentDialog):
 
             self.current_order.item_list.clear()
 
-            self.current_order.add_item(item1.quantity, item1)
-            self.current_order.add_item(item2.quantity, item2)
-            self.current_order.add_item(item3.quantity, item3)
+            self.current_order.add_item(item1.quantity, item1.weigth, item1)
+            self.current_order.add_item(item2.quantity, item2.weigth, item2)
+            self.current_order.add_item(item3.quantity, item3.weigth, item3)
+            self.current_order.add_item(item3.quantity, item4.weigth, item4)
+            self.current_order.add_item(item3.quantity, item5.weigth, item5)
+            self.current_order.add_item(item3.quantity, item6.weigth, item6)
+            self.current_order.add_item(item3.quantity, item7.weigth, item7)
 
-        card = Order.generate_list_items_card(self.current_order)
+        order_status = self.current_order.show_items()
 
-        response = activity_helper.create_activity_reply(
-            step_context.context.activity, "", "", [card]
-        )
+        prompt_message = MessageFactory.text(order_status)
 
         return await step_context.prompt(
             TextPrompt.__name__, PromptOptions(prompt=response)
@@ -96,55 +143,91 @@ class OrderDialog(ComponentDialog):
 
         action = DialogHelper.recognize_intention(query)
 
+        if len(splitted) > 1:
+            item_description = query[
+                query.find((splitted[2])[0]):
+            ].capitalize()
+        else:
+            item_description = splitted[0]
+
         item = next(
             (
                 x
                 for x in self.current_order.item_list
-                if x.description.lower() == splitted[2].lower()
+                if x.description.lower() == item_description.lower()
             ),
             None,
         )
-        if not item:
+
+        is_item = True if item else False
+
+        item_quantity = int(splitted[1]) if is_item and item.weigth == 0 else 0
+        item_weight = int(splitted[1]) if is_item and item.quantity == 0 else 0
+        if not item and action.description != "confirmed":
             item = Item(
                 product_id=self.current_order.item_list[-1].product_id + 1,
-                description=splitted[2],
+                description=item_description,
                 item_id=self.current_order.item_list[-1].item_id + 1,
                 quantity=int(splitted[1]),
                 unit=unit,
             )
-        action.execute(float(splitted[1]), self.current_order, item)
+            item_quantity = item.quantity
+            item_weight = item.weigth
+
+        action.execute(item_quantity, item_weight, self.current_order, item)
+
+        if self.current_order.status == OrderStatus.Confirmed:
+            if (
+                type(step_context.result) is bool and not step_context.result
+            ) or (
+                type(step_context.result) is str
+                and not "confirm" in step_context.result.lower()
+            ):
+                prompt_message = MessageFactory.text(
+                    "I don't want to do that right now"
+                )
+                await step_context.prompt(
+                    TextPrompt.__name__, PromptOptions(prompt=prompt_message)
+                )
+
+                return await step_context.end_dialog()
+            elif (
+                type(step_context.result) is bool and step_context.result
+            ) or (
+                type(step_context.result) is str
+                and "confirm" in step_context.result.lower()
+            ):
+                return await step_context.prompt(
+                    ConfirmPrompt.__name__,
+                    PromptOptions(
+                        prompt=MessageFactory.text(
+                            "You want to confirm this order?"
+                        )
+                    ),
+                )
         await step_context.context.send_activity(
             MessageFactory.text(
-                f"{splitted[1]} {splitted[2]} was {action.description}!"
+                f"{splitted[1]} {item_description} was {action.description}!"
             )
         )
-        if self.current_order.status == OrderStatus.Confirmed:
-            return await step_context.next(step_context.result)
-
         return await step_context.replace_dialog(self.id, step_context.result)
 
     async def goodbye_step(
         self, step_context: WaterfallStepContext
     ) -> DialogTurnResult:
         """ TODO: Add description for OrderDialog.second_step """
-        if (type(step_context.result) is bool and not step_context.result) or (
-            type(step_context.result) is str
-            and not "confirm" in step_context.result.lower()
-        ):
-            prompt_message = MessageFactory.text("I don't want to do that right now")
-            await step_context.prompt(
-                TextPrompt.__name__, PromptOptions(prompt=prompt_message)
-            )
-        elif (type(step_context.result) is bool and step_context.result) or (
-            type(step_context.result) is str
-            and "confirm" in step_context.result.lower()
-        ):
-
+        if step_context.result:
             await step_context.context.send_activity(
                 MessageFactory.text("The order was confirmed!")
             )
             await step_context.context.send_activity(MessageFactory.text("Thank you!"))
 
-        await step_context.context.send_activity(MessageFactory.text("Bye!"))
+            await step_context.context.send_activity(
+                MessageFactory.text("Bye!")
+            )
 
-        return await step_context.end_dialog()
+            return await step_context.end_dialog()
+        else:
+            return await step_context.replace_dialog(
+                self.id, step_context.result
+            )

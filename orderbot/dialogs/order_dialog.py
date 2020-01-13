@@ -76,38 +76,14 @@ class OrderDialog(ComponentDialog):
             self.current_order.add_item(item2.quantity, item2)
             self.current_order.add_item(item3.quantity, item3)
 
-            # await step_context.context.send_activity(
-            #     MessageFactory.text("You can Remove or Add an item to the list (Remove/Add 1 item)")
-            # )
-            #
-            # await step_context.context.send_activity(
-            #     MessageFactory.text("When you are ready to confirm the order, type 'Confirm order'")
-            # )
+        card = Order.generate_list_items_card(self.current_order)
 
-        lista_estado = "The items in the list are:\n" + self.current_order.show_items()
-        # --------------------------------------
-        #
-        # card = Order.experimental_card(self.current_order)
-        #
-        # response = create_activity_reply(
-        #     step_context.context.activity, "", "", [card]
-        # )
-        # await step_context.context.send_activity(response)
-        # --------------------------------------
-        card2 = Order.experimental_card_2(self.current_order)
-
-        response2 = create_activity_reply(
-            step_context.context.activity, "", "", [card2]
-        )
-        await step_context.context.send_activity(response2)
-        # --------------------------------------
-
-        prompt_message = MessageFactory.text(
-            lista_estado
+        response = create_activity_reply(
+            step_context.context.activity, "", "", [card]
         )
 
         return await step_context.prompt(
-            TextPrompt.__name__, PromptOptions(prompt=prompt_message)
+            TextPrompt.__name__, PromptOptions(prompt=response)
         )
 
     async def interpret_user_intention(self, step_context: WaterfallStepContext) -> DialogTurnResult:
@@ -151,20 +127,13 @@ class OrderDialog(ComponentDialog):
             )
         elif (type(step_context.result) is bool and step_context.result) or\
                 (type(step_context.result) is str and "confirm" in step_context.result.lower()):
-            # await step_context.prompt(
-            #     ConfirmPrompt.__name__,
-            #     PromptOptions(prompt=MessageFactory.text("You want to confirm this order?")),
-            # )
-            #
-            # if step_context.result:
+
             await step_context.context.send_activity(
                 MessageFactory.text("The order was confirmed!")
             )
             await step_context.context.send_activity(
                 MessageFactory.text("Thank you!")
             )
-            # TODO: Fix here, see something alternative
-            # await self.interpret_user_intention(step_context)
 
         await step_context.context.send_activity(
             MessageFactory.text("Bye!")

@@ -4,10 +4,7 @@
 import enum
 from typing import List
 
-from botbuilder.core import CardFactory
 from botbuilder.schema import Attachment
-
-import json
 
 from .item import Item
 
@@ -49,7 +46,6 @@ class Order:
 
     def to_string(self):
         """ returns a text representation of the object """
-        # TODO: Implement method Order.to_string
         return "{0}".format(self.order_id)
 
     def show_items(self) -> str:

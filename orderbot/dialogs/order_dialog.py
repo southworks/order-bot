@@ -11,17 +11,14 @@ from botbuilder.dialogs import (
 )
 from botbuilder.dialogs.prompts import (
     TextPrompt,
-    NumberPrompt,
     ChoicePrompt,
     ConfirmPrompt,
     PromptOptions,
-    PromptValidatorContext,
 )
-from botbuilder.dialogs.choices import Choice
 from botbuilder.core import MessageFactory, UserState
 
 from orderbot.data_models import Order, Unit, Item
-from orderbot.helpers.activity_helper import create_activity_reply
+from orderbot.helpers import activity_helper
 
 
 class OrderDialog(ComponentDialog):
@@ -78,7 +75,7 @@ class OrderDialog(ComponentDialog):
 
         card = Order.generate_list_items_card(self.current_order)
 
-        response = create_activity_reply(
+        response = activity_helper.create_activity_reply(
             step_context.context.activity, "", "", [card]
         )
 

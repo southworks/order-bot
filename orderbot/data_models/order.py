@@ -19,7 +19,7 @@ class Order:
         self.item_list: List[Item] = list()
         self.status = OrderStatus.New
 
-    def add_item(self, quantity: float, item: Item):
+    def add_item(self, quantity: int, weight: float, item: Item):
         """ Adds items to the list if there is no match
             Else, it updates the item.
         """
@@ -27,22 +27,23 @@ class Order:
             if item in self.item_list:
                 for i in range(0, len(self.item_list)):
                     if item.product_id == self.item_list[i].product_id:
-                        item.quantity += int(quantity) if item.unit.description == "" else quantity
-                    else:
-                        self.item_list.append(item)
+                        item.quantity += quantity
+                        item.weigth += weight
             else:
                 self.item_list.append(item)
         else:
             self.item_list.append(item)
 
-    def remove_item(self, quantity, item):
+    def remove_item(self, quantity, weight, item):
         """ Removes items from the list if the remaining quantity is 0
             If quantity is greater than 0, then the item is modified
         """
-        if quantity >= item.quantity:
+        if quantity != 0 and quantity >= item.quantity or weight >= item.weigth:
             self.item_list.remove(item)
-        else:
-            item.quantity -= int(quantity) if item.unit.description == "" else quantity
+        elif item.unit.description != '' and quantity != 0:
+            item.quantity -= quantity
+        elif item.unit.description != '' and weight != 0:
+            item.weigth -= weight
 
     def confirm_order(self):
         """ Confirms the Order """
@@ -61,6 +62,7 @@ class Order:
             content += "The list is empty."
             return content
 
+        content += "The items in the order are:\n"
         for item in self.item_list:
             content += item.to_string() + "\n"
 

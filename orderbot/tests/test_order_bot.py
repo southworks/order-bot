@@ -3,7 +3,6 @@ from dialogs import OrderDialog
 
 
 class TestOrderBot:
-
     @staticmethod
     def test_dummy_test():
         order = Order(0)

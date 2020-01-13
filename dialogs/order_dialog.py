@@ -14,7 +14,7 @@ from botbuilder.dialogs.prompts import (
 )
 from botbuilder.core import MessageFactory, UserState
 
-from data_models import Unit, Item, Order
+from data_models import Unit, Item, Order, OrderStatus
 from helpers import activity_helper, DialogHelper
 
 

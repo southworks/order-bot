@@ -17,6 +17,8 @@ from botbuilder.core import MessageFactory, UserState
 from helpers import DialogHelper
 from data_models import Unit, Item, Order, OrderStatus
 
+from helpers import activity_helper
+
 
 class OrderDialog(ComponentDialog):
     """ TODO: Add description for OrderDialog class. """
@@ -122,9 +124,11 @@ class OrderDialog(ComponentDialog):
             self.current_order.add_item(item3.quantity, item6.weigth, item6)
             self.current_order.add_item(item3.quantity, item7.weigth, item7)
 
-        order_status = self.current_order.show_items()
+        card = self.current_order.generate_list_items_card()
 
-        prompt_message = MessageFactory.text(order_status)
+        response = activity_helper.create_activity_reply(
+            step_context.context.activity, "", "", [card]
+        )
 
         return await step_context.prompt(
             TextPrompt.__name__, PromptOptions(prompt=response)

@@ -1,4 +1,4 @@
-name: Python application
+name: OrderBotTets
 
 on: [push,pull_request]
 

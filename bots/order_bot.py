@@ -22,12 +22,7 @@ from botbuilder.core import (
 )
 from botbuilder.dialogs import Dialog
 
-from orderbot.dialogs import OrderDialog
-from orderbot.helpers.dialog_helper import DialogHelper
-
-from orderbot.data_models.unit import Unit
-from orderbot.data_models.order import Order, OrderStatus
-from orderbot.data_models.item import Item
+from helpers import DialogHelper
 
 
 class OrderBot(ActivityHandler):

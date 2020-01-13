@@ -8,17 +8,16 @@ from botbuilder.dialogs import (
 )
 from botbuilder.dialogs.prompts import (
     TextPrompt,
-    NumberPrompt,
     ChoicePrompt,
     ConfirmPrompt,
     PromptOptions,
-    PromptValidatorContext,
 )
-from botbuilder.dialogs.choices import Choice
 from botbuilder.core import MessageFactory, UserState
 
 from helpers import DialogHelper
 from data_models import Unit, Item, Order, OrderStatus
+
+from helpers import activity_helper
 
 
 class OrderDialog(ComponentDialog):
@@ -125,12 +124,14 @@ class OrderDialog(ComponentDialog):
             self.current_order.add_item(item3.quantity, item6.weigth, item6)
             self.current_order.add_item(item3.quantity, item7.weigth, item7)
 
-        order_status = self.current_order.show_items()
+        card = self.current_order.generate_list_items_card()
 
-        prompt_message = MessageFactory.text(order_status)
+        response = activity_helper.create_activity_reply(
+            step_context.context.activity, "", "", [card]
+        )
 
         return await step_context.prompt(
-            TextPrompt.__name__, PromptOptions(prompt=prompt_message)
+            TextPrompt.__name__, PromptOptions(prompt=response)
         )
 
     async def interpret_user_intention(
@@ -223,9 +224,7 @@ class OrderDialog(ComponentDialog):
             await step_context.context.send_activity(
                 MessageFactory.text("The order was confirmed!")
             )
-            await step_context.context.send_activity(
-                MessageFactory.text("Thank you!")
-            )
+            await step_context.context.send_activity(MessageFactory.text("Thank you!"))
 
             await step_context.context.send_activity(
                 MessageFactory.text("Bye!")

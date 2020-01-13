@@ -3,10 +3,10 @@ from typing import List
 
 from botbuilder.core import CardFactory
 from botbuilder.schema import Attachment
+from pyadaptivecards.card import AdaptiveCard
+from pyadaptivecards.components import TextBlock
 
-import json
-
-from data_models import Item
+from .item import Item
 
 
 class Order:
@@ -54,7 +54,6 @@ class Order:
 
     def to_string(self):
         """ returns a text representation of the object """
-        # TODO: Implement method Order.to_string
         return "{0}".format(self.order_id)
 
     def show_items(self) -> str:
@@ -70,185 +69,32 @@ class Order:
 
         return content
 
-    def get_table_style_card(self) -> Attachment:
-        # parse through the list and show every element in a row
-        # return CardFactory.adaptive_card(ADAPTIVE_CARD_CONTENT)
-        PROTOTYPE_CARD_REAL = {
-            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-            "type": "AdaptiveCard",
-            "version": "1.0",
-            "body": [
-                {
-                    "type": "ColumnSet",
-                    "columns": [
-                        {
-                            "type": "Column",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "weight": "bolder",
-                                    "text": "Quantity",
-                                },
-                                {
-                                    "type": "TextBlock",
-                                    "separator": True,
-                                    "text": "5",
-                                },
-                                {
-                                    "type": "TextBlock",
-                                    "separator": False,
-                                    "text": "3",
-                                },
-                                {
-                                    "type": "TextBlock",
-                                    "separator": False,
-                                    "text": "2",
-                                },
-                            ],
-                        },
-                        {
-                            "type": "Column",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "weight": "bolder",
-                                    "text": "Item",
-                                },
-                                {
-                                    "type": "TextBlock",
-                                    "separator": True,
-                                    "text": "Chocolate",
-                                },
-                                {
-                                    "type": "TextBlock",
-                                    "separator": False,
-                                    "text": "Yerba",
-                                },
-                                {
-                                    "type": "TextBlock",
-                                    "separator": False,
-                                    "text": "Candy",
-                                },
-                            ],
-                        },
-                    ],
-                }
-            ],
+    def generate_list_items_card(self) -> Attachment:
+        from pyadaptivecards.card import AdaptiveCard
+        from pyadaptivecards.inputs import Text, Number
+        from pyadaptivecards.components import TextBlock
+        from pyadaptivecards.actions import Submit
+
+        body = []
+        greeting = TextBlock("Current order", color="good", weight="bolder", size="medium")
+        submit = Submit(title="Confirm Order")
+
+        body.append(greeting)
+
+        for item in self.item_list:
+            item_desc = TextBlock(str(item.quantity) + " " + item.description)
+            body.append(item_desc)
+
+        # card = AdaptiveCard(body=body, actions=[submit])
+        card = AdaptiveCard(body=body, actions=[submit])
+
+        # Create attachment
+        attachment = {
+            "contentType": "application/vnd.microsoft.card.adaptive",
+            "content": card.to_dict()
         }
 
-        card = PROTOTYPE_CARD_REAL
-
-        return Attachment(
-            content_type=CardFactory.content_types.adaptive_card, content=card
-        )
-
-    # def create_table_style_card_2(self) -> Attachment:
-    #     # card = Order.get_headers(self)
-    #
-    #     base_dict = {
-    #         "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-    #         "type": "AdaptiveCard",
-    #         "version": "1.0",
-    #         "body": []
-    #     }
-    #
-    #     # rare_card = '{\'$schema\': \'http://adaptivecards.io/schemas/adaptive-card.json\',\'type\': \'AdaptiveCard\',\'version\': \'1.0\'}'
-    #     # resx = json.loads(card)
-    #
-    #     card += "'body': [{"
-    #     card += "'type': 'ColumnSet',"
-    #     card += "'columns': ["
-    #
-    #     card += Order.get_cells_quantity(self)
-    #     card += Order.get_cells_description(self)
-    #     card += Order.get_bottom(self)
-    #     # card = card.replace("'", '"')
-    #     # card = card.replace("True", 'true')
-    #
-    #     # printing original string
-    #     print("The original string : " + str(card))
-    #
-    #     # using json.loads()
-    #     # convert dictionary string to dictionary
-    #     res = json.loads(card)
-    #
-    #     return Attachment(
-    #         content_type=CardFactory.content_types.adaptive_card, content=res
-    #     )
-
-    def get_headers(self) -> str:
-        rows_text: str = ""
-        rows_text += "{"
-
-        rows_text += (
-            "'$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',"
-        )
-        rows_text += "'type': 'AdaptiveCard',"
-        rows_text += "'version': '1.0',"
-        rows_text = rows_text.rstrip(",")
-
-        # rows_text += "'body': [{"
-        # rows_text += "'type': 'ColumnSet',"
-        # rows_text += "'columns': ["
-        return rows_text
-
-    def get_cells_quantity(self) -> str:
-        rows_text: str = ""
-
-        rows_text += "{"
-        rows_text += "'type': 'Column', 'items': ["
-
-        # header
-        rows_text += "{"
-        rows_text += "'type': 'TextBlock', 'separator': True, 'text': '{0}'".format(
-            "Quantity"
-        )
-        rows_text += "},"
-
-        for item in self.item_list:
-            rows_text += "{"
-            rows_text += "'type': 'TextBlock', 'separator': False, 'text': '{0}'".format(
-                str(item.quantity)
-            )
-            rows_text += "},"
-
-        # remove last trailing comma
-        rows_text = rows_text.rstrip(",")
-        rows_text += "]}"
-        rows_text += ","
-
-        return rows_text
-
-    def get_cells_description(self) -> str:
-        rows_text: str = ""
-
-        rows_text += "{"
-        rows_text += "'type': 'Column', 'items': ["
-
-        # header
-        rows_text += "{"
-        rows_text += "'type': 'TextBlock', 'separator': False, 'text': '{0}'".format(
-            "Item"
-        )
-        rows_text += "},"
-
-        for item in self.item_list:
-            rows_text += "{"
-            rows_text += "'type': 'TextBlock', 'separator': True, 'text': '{0}'".format(
-                item.description
-            )
-            rows_text += "},"
-
-        # remove last trailing comma
-        rows_text = rows_text.rstrip(",")
-        rows_text += "]}"
-
-        return rows_text
-
-    def get_bottom(self) -> str:
-        rows_text: str = ""
-        rows_text += "]}]}"
-        return rows_text
+        return attachment
 
 
 class OrderStatus(enum.Enum):

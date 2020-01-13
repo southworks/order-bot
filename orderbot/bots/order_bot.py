@@ -19,12 +19,12 @@ from botbuilder.schema import (
 from botbuilder.core import ActivityHandler, ConversationState, TurnContext, UserState, MessageFactory
 from botbuilder.dialogs import Dialog
 
-from dialogs import OrderDialog
-from helpers.dialog_helper import DialogHelper
+from orderbot.dialogs import OrderDialog
+from orderbot.helpers.dialog_helper import DialogHelper
 
-from data_models.unit import Unit
-from data_models.order import Order, OrderStatus
-from data_models.item import Item
+from orderbot.data_models.unit import Unit
+from orderbot.data_models.order import Order, OrderStatus
+from orderbot.data_models.item import Item
 
 
 class OrderBot(ActivityHandler):

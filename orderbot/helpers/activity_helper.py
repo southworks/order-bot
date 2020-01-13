@@ -10,12 +10,7 @@ from botbuilder.schema import (
 )
 
 
-def create_activity_reply(
-    activity: Activity,
-    text: str = None,
-    locale: str = None,
-        attachments=None,
-):
+def create_activity_reply(activity: Activity, text: str = None, locale: str = None, attachments=None):
     if attachments is None:
         attachments = []
     attachments_aux = attachments.copy()

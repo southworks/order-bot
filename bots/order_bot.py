@@ -41,12 +41,16 @@ class OrderBot(ActivityHandler):
                 "[DialogBot]: Missing parameter. user_state is required but None was given"
             )
         if dialog is None:
-            raise Exception("[DialogBot]: Missing parameter. dialog is required")
+            raise Exception(
+                "[DialogBot]: Missing parameter. dialog is required"
+            )
 
         self.conversation_state = conversation_state
         self.user_state = user_state
         self.dialog = dialog
-        self.user_state_accessor = self.user_state.create_property("WelcomeUserState")
+        self.user_state_accessor = self.user_state.create_property(
+            "WelcomeUserState"
+        )
         self.WELCOME_MESSAGE = """Hello user!"""
 
     async def on_turn(self, turn_context: TurnContext):

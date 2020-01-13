@@ -76,10 +76,14 @@ async def messages(req: Request) -> Response:
         return Response(status=415)
 
     activity = Activity().deserialize(body)
-    auth_header = req.headers["Authorization"] if "Authorization" in req.headers else ""
+    auth_header = (
+        req.headers["Authorization"] if "Authorization" in req.headers else ""
+    )
 
     try:
-        response = await ADAPTER.process_activity(activity, auth_header, BOT.on_turn)
+        response = await ADAPTER.process_activity(
+            activity, auth_header, BOT.on_turn
+        )
         if response:
             return json_response(data=response.body, status=response.status)
         return Response(status=201)

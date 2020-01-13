@@ -1,5 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
+
 
 from typing import List
 
@@ -36,7 +35,11 @@ class OrderDialog(ComponentDialog):
         self.add_dialog(
             WaterfallDialog(
                 WaterfallDialog.__name__,
-                [self.options_step, self.interpret_user_intention, self.goodbye_step],
+                [
+                    self.options_step,
+                    self.interpret_user_intention,
+                    self.goodbye_step,
+                ],
             )
         )
         self.add_dialog(ChoicePrompt("options_step"))
@@ -57,13 +60,25 @@ class OrderDialog(ComponentDialog):
 
             # create items
             item1 = Item(
-                product_id=1, item_id=1, quantity=5, description="Chocolate", unit=unit
+                product_id=1,
+                item_id=1,
+                quantity=5,
+                description="Chocolate",
+                unit=unit,
             )
             item2 = Item(
-                product_id=2, item_id=2, quantity=3, description="Yerba", unit=unit_kg
+                product_id=2,
+                item_id=2,
+                quantity=3,
+                description="Yerba",
+                unit=unit_kg,
             )
             item3 = Item(
-                product_id=3, item_id=3, quantity=2, description="Candy", unit=unit
+                product_id=3,
+                item_id=3,
+                quantity=2,
+                description="Candy",
+                unit=unit,
             )
 
             # create order
@@ -87,7 +102,9 @@ class OrderDialog(ComponentDialog):
             #     MessageFactory.text("When you are ready to confirm the order, type 'Confirm order'")
             # )
 
-        lista_estado = "The items in the list are:\n" + self.current_order.show_items()
+        lista_estado = (
+            "The items in the list are:\n" + self.current_order.show_items()
+        )
 
         prompt_message = MessageFactory.text(lista_estado)
 
@@ -143,7 +160,9 @@ class OrderDialog(ComponentDialog):
             type(step_context.result) is str
             and not "confirm" in step_context.result.lower()
         ):
-            prompt_message = MessageFactory.text("I don't want to do that right now")
+            prompt_message = MessageFactory.text(
+                "I don't want to do that right now"
+            )
             await step_context.prompt(
                 TextPrompt.__name__, PromptOptions(prompt=prompt_message)
             )
@@ -160,7 +179,9 @@ class OrderDialog(ComponentDialog):
             await step_context.context.send_activity(
                 MessageFactory.text("The order was confirmed!")
             )
-            await step_context.context.send_activity(MessageFactory.text("Thank you!"))
+            await step_context.context.send_activity(
+                MessageFactory.text("Thank you!")
+            )
             # TODO: Fix here, see something alternative
             # await self.interpret_user_intention(step_context)
 

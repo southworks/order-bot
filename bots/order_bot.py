@@ -1,6 +1,3 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
-
 from botbuilder.core import (
     ActivityHandler,
     TurnContext,
@@ -25,12 +22,7 @@ from botbuilder.core import (
 )
 from botbuilder.dialogs import Dialog
 
-from orderbot.dialogs import OrderDialog
-from orderbot.helpers.dialog_helper import DialogHelper
-
-from orderbot.data_models.unit import Unit
-from orderbot.data_models.order import Order, OrderStatus
-from orderbot.data_models.item import Item
+from helpers import DialogHelper
 
 
 class OrderBot(ActivityHandler):
@@ -49,12 +41,16 @@ class OrderBot(ActivityHandler):
                 "[DialogBot]: Missing parameter. user_state is required but None was given"
             )
         if dialog is None:
-            raise Exception("[DialogBot]: Missing parameter. dialog is required")
+            raise Exception(
+                "[DialogBot]: Missing parameter. dialog is required"
+            )
 
         self.conversation_state = conversation_state
         self.user_state = user_state
         self.dialog = dialog
-        self.user_state_accessor = self.user_state.create_property("WelcomeUserState")
+        self.user_state_accessor = self.user_state.create_property(
+            "WelcomeUserState"
+        )
         self.WELCOME_MESSAGE = """Hello user!"""
 
     async def on_turn(self, turn_context: TurnContext):

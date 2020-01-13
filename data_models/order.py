@@ -1,6 +1,3 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
-
 import enum
 from typing import List
 
@@ -9,7 +6,7 @@ from botbuilder.schema import Attachment
 
 import json
 
-from orderbot.data_models.item import Item
+from data_models import Item
 
 
 class Order:
@@ -29,7 +26,9 @@ class Order:
                 for i in range(0, len(self.item_list)):
                     if item.product_id == self.item_list[i].product_id:
                         item.quantity += (
-                            int(quantity) if item.unit.description == "" else quantity
+                            int(quantity)
+                            if item.unit.description == ""
+                            else quantity
                         )
                     else:
                         self.item_list.append(item)
@@ -45,7 +44,9 @@ class Order:
         if quantity >= item.quantity:
             self.item_list.remove(item)
         else:
-            item.quantity -= int(quantity) if item.unit.description == "" else quantity
+            item.quantity -= (
+                int(quantity) if item.unit.description == "" else quantity
+            )
 
     def confirm_order(self):
         """ Confirms the Order """
@@ -88,9 +89,21 @@ class Order:
                                     "weight": "bolder",
                                     "text": "Quantity",
                                 },
-                                {"type": "TextBlock", "separator": True, "text": "5"},
-                                {"type": "TextBlock", "separator": False, "text": "3"},
-                                {"type": "TextBlock", "separator": False, "text": "2"},
+                                {
+                                    "type": "TextBlock",
+                                    "separator": True,
+                                    "text": "5",
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "separator": False,
+                                    "text": "3",
+                                },
+                                {
+                                    "type": "TextBlock",
+                                    "separator": False,
+                                    "text": "2",
+                                },
                             ],
                         },
                         {
@@ -167,7 +180,9 @@ class Order:
         rows_text: str = ""
         rows_text += "{"
 
-        rows_text += "'$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',"
+        rows_text += (
+            "'$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',"
+        )
         rows_text += "'type': 'AdaptiveCard',"
         rows_text += "'version': '1.0',"
         rows_text = rows_text.rstrip(",")

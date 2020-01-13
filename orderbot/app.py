@@ -1,5 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
+
 
 import asyncio
 import sys
@@ -25,7 +24,9 @@ APP.config.from_object("config.DefaultConfig")
 
 # Create adapter.
 # See https://aka.ms/about-bot-adapter to learn more about how bots work.
-SETTINGS = BotFrameworkAdapterSettings(APP.config["APP_ID"], APP.config["APP_PASSWORD"])
+SETTINGS = BotFrameworkAdapterSettings(
+    APP.config["APP_ID"], APP.config["APP_PASSWORD"]
+)
 ADAPTER = BotFrameworkAdapter(SETTINGS)
 
 
@@ -85,7 +86,9 @@ def messages():
 
     activity = Activity().deserialize(body)
     auth_header = (
-        request.headers["Authorization"] if "Authorization" in request.headers else ""
+        request.headers["Authorization"]
+        if "Authorization" in request.headers
+        else ""
     )
 
     try:

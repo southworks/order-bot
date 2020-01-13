@@ -20,8 +20,7 @@ from botbuilder.dialogs.prompts import (
 from botbuilder.dialogs.choices import Choice
 from botbuilder.core import MessageFactory, UserState
 
-from orderbot.data_models import Order, Unit, Item
-from orderbot.helpers.activity_helper import create_activity_reply
+from data_models import Unit, Item, Order
 
 
 class OrderDialog(ComponentDialog):

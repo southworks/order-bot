@@ -17,8 +17,8 @@ from botbuilder.dialogs.prompts import (
 )
 from botbuilder.core import MessageFactory, UserState
 
-from orderbot.data_models import Order, Unit, Item
-from orderbot.helpers import activity_helper
+from orderbot.data_models import Order, Unit, Item, OrderStatus
+from orderbot.helpers import activity_helper, DialogHelper
 
 
 class OrderDialog(ComponentDialog):
@@ -36,7 +36,7 @@ class OrderDialog(ComponentDialog):
                 [
                     self.options_step,
                     self.interpret_user_intention,
-                    self.third_step
+                    self.goodbye_step
 
                 ],
             )
@@ -57,7 +57,7 @@ class OrderDialog(ComponentDialog):
 
             # create items
             item1 = Item(product_id=1, item_id=1, quantity=5, description="Chocolate", unit=unit)
-            item2 = Item(product_id=2, item_id=2, quantity=3, description="Yerba", unit=unit)
+            item2 = Item(product_id=2, item_id=2, quantity=3, description="Yerba", unit=unit_kg)
             item3 = Item(product_id=3, item_id=3, quantity=2, description="Candy", unit=unit)
 
             # create order
@@ -87,34 +87,27 @@ class OrderDialog(ComponentDialog):
         """
             New step that interprets the user intent, using a split and invoking add and remove
         """
+        unit = Unit(1)
         step_context.values["input"] = step_context.result
         query = str(step_context.result).lower()
+        splitted = query.split()
 
-        if "confirm" not in query:
-            splitted = query.split()
-            unit = Unit(1)
+        action = DialogHelper.recognize_intention(query)
 
-            item = next((x for x in self.current_order.item_list if x.description.lower() == splitted[2].lower()), None)
-            if not item:
-                item = Item(product_id=self.current_order.item_list[-1].product_id + 1, description=splitted[2],
-                            item_id=self.current_order.item_list[-1].item_id + 1, quantity=int(splitted[1]), unit=unit)
-            if "add" in query:
-                self.current_order.add_item(float(splitted[1]), item)
-                await step_context.context.send_activity(
-                    MessageFactory.text(splitted[1] + " " + splitted[2] + " added!")
-                )
-            elif "remove" in query:
-                self.current_order.remove_item(float(splitted[1]), item)
-                await step_context.context.send_activity(
-                    MessageFactory.text(splitted[1] + " " + splitted[2] + " removed!")
-                )
-
-            # TODO: test this
-            return await step_context.replace_dialog(self.id, step_context.result)
-        else:
+        item = next((x for x in self.current_order.item_list if x.description.lower() == splitted[2].lower()), None)
+        if not item:
+            item = Item(product_id=self.current_order.item_list[-1].product_id + 1, description=splitted[2],
+                        item_id=self.current_order.item_list[-1].item_id + 1, quantity=int(splitted[1]), unit=unit)
+        action.execute(float(splitted[1]), self.current_order, item)
+        await step_context.context.send_activity(
+            MessageFactory.text(f'{splitted[1]} {splitted[2]} was {action.description}!')
+        )
+        if self.current_order.status == OrderStatus.Confirmed:
             return await step_context.next(step_context.result)
 
-    async def third_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
+        return await step_context.replace_dialog(self.id, step_context.result)
+
+    async def goodbye_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
         """ TODO: Add description for OrderDialog.second_step """
         if (type(step_context.result) is bool and not step_context.result) or\
                 (type(step_context.result) is str and not "confirm" in step_context.result.lower()):

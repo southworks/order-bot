@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+from orderbot.data_models.order import Order
 
 
 class Action:
@@ -10,17 +11,27 @@ class Action:
 
 class Add(Action):
     """ TODO: Add description for Add class. """
-    def execute(self, number, order, item):
-        pass
+    def execute(self, number, order: Order, item):
+        order.add_item(number, item)
 
+    @property
+    def description(self):
+        return 'added'
 
 class Remove(Action):
     """ TODO: Add description for Remove class. """
-    def execute(self, number, order, item):
-        pass
+    def execute(self, number, order: Order, item):
+        order.remove_item(number, item)
 
+    @property
+    def description(self):
+        return 'removed'
 
 class Confirm(Action):
     """ TODO: Add description for Confirm class. """
-    def execute(self, number, order, item):
-        pass
+    def execute(self, number, order: Order, item):
+        order.confirm_order()
+
+    @property
+    def description(self):
+        return 'confirmed'

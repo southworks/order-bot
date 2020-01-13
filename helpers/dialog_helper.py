@@ -9,7 +9,9 @@ from orderbot.data_models import Add, Remove, Confirm
 
 class DialogHelper:
     @staticmethod
-    async def run_dialog(dialog: Dialog, turn_context: TurnContext, accessor: StatePropertyAccessor):
+    async def run_dialog(
+        dialog: Dialog, turn_context: TurnContext, accessor: StatePropertyAccessor
+    ):
         dialog_set = DialogSet(accessor)
         dialog_set.add(dialog)
 
@@ -20,9 +22,9 @@ class DialogHelper:
 
     @staticmethod
     def recognize_intention(text):
-        if 'add' in text:
+        if "add" in text:
             return Add()
-        elif 'remove' in text:
+        elif "remove" in text:
             return Remove()
-        elif 'confirm' in text:
+        elif "confirm" in text:
             return Confirm()

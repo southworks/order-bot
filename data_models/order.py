@@ -1,6 +1,3 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
-
 import enum
 from typing import List
 
@@ -9,9 +6,9 @@ from botbuilder.schema import Attachment
 from .item import Item
 
 
-
 class Order:
     """ Represents an Order, that contains a list of items to Order. """
+
     def __init__(self, order_id: int = 0):
         self.order_id = order_id
         self.item_list: List[Item] = list()
@@ -25,7 +22,9 @@ class Order:
             if item in self.item_list:
                 for i in range(0, len(self.item_list)):
                     if item.product_id == self.item_list[i].product_id:
-                        item.quantity += int(quantity) if item.unit.description == "" else quantity
+                        item.quantity += (
+                            int(quantity) if item.unit.description == "" else quantity
+                        )
             else:
                 self.item_list.append(item)
         else:
@@ -68,7 +67,9 @@ class Order:
         from pyadaptivecards.actions import Submit
 
         body = []
-        greeting = TextBlock("Current order", color="good", weight="bolder", size="medium")
+        greeting = TextBlock(
+            "Current order", color="good", weight="bolder", size="medium"
+        )
         body.append(greeting)
 
         for item in self.item_list:
@@ -83,7 +84,7 @@ class Order:
         # Create attachment
         attachment = {
             "contentType": "application/vnd.microsoft.card.adaptive",
-            "content": card.to_dict()
+            "content": card.to_dict(),
         }
 
         return attachment

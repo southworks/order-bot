@@ -2,7 +2,6 @@ from orderbot.data_models import Order, Item
 
 
 class TestOrderBot:
-
     @staticmethod
     def test_dummy_test():
         order = Order(0)

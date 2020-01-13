@@ -1,6 +1,3 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
-
 from botbuilder.core import (
     ActivityHandler,
     TurnContext,
@@ -16,7 +13,13 @@ from botbuilder.schema import (
     ActionTypes,
 )
 
-from botbuilder.core import ActivityHandler, ConversationState, TurnContext, UserState, MessageFactory
+from botbuilder.core import (
+    ActivityHandler,
+    ConversationState,
+    TurnContext,
+    UserState,
+    MessageFactory,
+)
 from botbuilder.dialogs import Dialog
 
 from orderbot.dialogs import OrderDialog
@@ -63,9 +66,7 @@ class OrderBot(ActivityHandler):
     ):
         for member in members_added:
             if member.id != turn_context.activity.recipient.id:
-                reply = MessageFactory.text(
-                    "Hello User! "
-                )
+                reply = MessageFactory.text("Hello User! ")
                 await turn_context.send_activity(reply)
 
     async def on_message_activity(self, turn_context: TurnContext):

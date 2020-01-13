@@ -1,6 +1,3 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
-
 import enum
 from typing import List
 
@@ -14,6 +11,7 @@ from data_models import Item
 
 class Order:
     """ Represents an Order, that contains a list of items to Order. """
+
     def __init__(self, order_id: int = 0):
         self.order_id = order_id
         self.item_list: List[Item] = list()
@@ -23,8 +21,19 @@ class Order:
         """ Adds items to the list if there is no match
             Else, it updates the item.
         """
-        if item in self.item_list:
-            item.quantity += int(quantity) if item.unit.description == "" else quantity
+        if self.item_list:
+            if item in self.item_list:
+                for i in range(0, len(self.item_list)):
+                    if item.product_id == self.item_list[i].product_id:
+                        item.quantity += (
+                            int(quantity)
+                            if item.unit.description == ""
+                            else quantity
+                        )
+                    else:
+                        self.item_list.append(item)
+            else:
+                self.item_list.append(item)
         else:
             self.item_list.append(item)
 
@@ -35,7 +44,9 @@ class Order:
         if quantity >= item.quantity:
             self.item_list.remove(item)
         else:
-            item.quantity -= int(quantity) if item.unit.description == "" else quantity
+            item.quantity -= (
+                int(quantity) if item.unit.description == "" else quantity
+            )
 
     def confirm_order(self):
         """ Confirms the Order """
@@ -76,24 +87,24 @@ class Order:
                                 {
                                     "type": "TextBlock",
                                     "weight": "bolder",
-                                    "text": "Quantity"
+                                    "text": "Quantity",
                                 },
                                 {
                                     "type": "TextBlock",
                                     "separator": True,
-                                    "text": "5"
+                                    "text": "5",
                                 },
                                 {
                                     "type": "TextBlock",
                                     "separator": False,
-                                    "text": "3"
+                                    "text": "3",
                                 },
                                 {
                                     "type": "TextBlock",
                                     "separator": False,
-                                    "text": "2"
-                                }
-                            ]
+                                    "text": "2",
+                                },
+                            ],
                         },
                         {
                             "type": "Column",
@@ -101,28 +112,28 @@ class Order:
                                 {
                                     "type": "TextBlock",
                                     "weight": "bolder",
-                                    "text": "Item"
+                                    "text": "Item",
                                 },
                                 {
                                     "type": "TextBlock",
                                     "separator": True,
-                                    "text": "Chocolate"
+                                    "text": "Chocolate",
                                 },
                                 {
                                     "type": "TextBlock",
                                     "separator": False,
-                                    "text": "Yerba"
+                                    "text": "Yerba",
                                 },
                                 {
                                     "type": "TextBlock",
                                     "separator": False,
-                                    "text": "Candy"
-                                }
-                            ]
+                                    "text": "Candy",
+                                },
+                            ],
                         },
-                    ]
+                    ],
                 }
-            ]
+            ],
         }
 
         card = PROTOTYPE_CARD_REAL
@@ -169,10 +180,12 @@ class Order:
         rows_text: str = ""
         rows_text += "{"
 
-        rows_text += "'$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',"
+        rows_text += (
+            "'$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',"
+        )
         rows_text += "'type': 'AdaptiveCard',"
         rows_text += "'version': '1.0',"
-        rows_text = rows_text.rstrip(',')
+        rows_text = rows_text.rstrip(",")
 
         # rows_text += "'body': [{"
         # rows_text += "'type': 'ColumnSet',"
@@ -187,16 +200,20 @@ class Order:
 
         # header
         rows_text += "{"
-        rows_text += "'type': 'TextBlock', 'separator': True, 'text': '{0}'".format("Quantity")
+        rows_text += "'type': 'TextBlock', 'separator': True, 'text': '{0}'".format(
+            "Quantity"
+        )
         rows_text += "},"
 
         for item in self.item_list:
             rows_text += "{"
-            rows_text += "'type': 'TextBlock', 'separator': False, 'text': '{0}'".format(str(item.quantity))
+            rows_text += "'type': 'TextBlock', 'separator': False, 'text': '{0}'".format(
+                str(item.quantity)
+            )
             rows_text += "},"
 
         # remove last trailing comma
-        rows_text = rows_text.rstrip(',')
+        rows_text = rows_text.rstrip(",")
         rows_text += "]}"
         rows_text += ","
 
@@ -210,16 +227,20 @@ class Order:
 
         # header
         rows_text += "{"
-        rows_text += "'type': 'TextBlock', 'separator': False, 'text': '{0}'".format("Item")
+        rows_text += "'type': 'TextBlock', 'separator': False, 'text': '{0}'".format(
+            "Item"
+        )
         rows_text += "},"
 
         for item in self.item_list:
             rows_text += "{"
-            rows_text += "'type': 'TextBlock', 'separator': True, 'text': '{0}'".format(item.description)
+            rows_text += "'type': 'TextBlock', 'separator': True, 'text': '{0}'".format(
+                item.description
+            )
             rows_text += "},"
 
         # remove last trailing comma
-        rows_text = rows_text.rstrip(',')
+        rows_text = rows_text.rstrip(",")
         rows_text += "]}"
 
         return rows_text

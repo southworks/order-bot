@@ -1,5 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
+
 
 from datetime import datetime
 from botbuilder.schema import (
@@ -11,10 +10,7 @@ from botbuilder.schema import (
 
 
 def create_activity_reply(
-    activity: Activity,
-    text: str = None,
-    locale: str = None,
-        attachments=None,
+    activity: Activity, text: str = None, locale: str = None, attachments=None
 ):
     if attachments is None:
         attachments = []

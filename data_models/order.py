@@ -36,11 +36,15 @@ class Order:
         """ Removes items from the list if the remaining quantity is 0
             If quantity is greater than 0, then the item is modified
         """
-        if quantity != 0 and quantity >= item.quantity or weight >= item.weigth:
+        if (
+            quantity != 0
+            and quantity >= item.quantity
+            or weight >= item.weigth
+        ):
             self.item_list.remove(item)
-        elif item.unit.description != '' and quantity != 0:
+        elif item.unit.description != "" and quantity != 0:
             item.quantity -= quantity
-        elif item.unit.description != '' and weight != 0:
+        elif item.unit.description != "" and weight != 0:
             item.weigth -= weight
 
     def confirm_order(self):

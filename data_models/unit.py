@@ -1,6 +1,3 @@
-
-
-
 class Unit:
     """ TODO: Add description for Unit class. """
 

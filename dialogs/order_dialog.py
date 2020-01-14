@@ -15,9 +15,8 @@ from botbuilder.dialogs.prompts import (
 from botbuilder.core import MessageFactory, UserState
 
 from helpers import DialogHelper, activity_helper
-from data_models import Order, OrderStatus, Constants
-import recognizers_suite
-from recognizers_suite import Culture, ModelResult
+from data_models import Order, OrderStatus
+from recognizers_suite import Culture
 
 DEFAULT_CULTURE = Culture.English
 
@@ -70,28 +69,11 @@ class OrderDialog(ComponentDialog):
         """
             New step that interprets the user intent, using a split and invoking add and remove
         """
-        unit = ''
 
         step_context.values['input'] = step_context.result
         user_input = step_context.values['input'].lower()
-
-        results = [sub_list for sub_list in parse_all(user_input, DEFAULT_CULTURE) if sub_list]
-        match = [item for sublist in results for item in sublist].pop()
-
-        has_unit, weight, is_quantity, quantity, unit = DialogHelper.resolve_quantity_and_weigh(match)
         action = DialogHelper.recognize_intention(user_input)
-        item_description = DialogHelper.normalize_description(has_unit, is_quantity, user_input, match)
-
-        item = next(
-            (
-                x
-                for x in self.current_order.item_list
-                if x.description.lower() == item_description.lower()
-            ),
-            None,
-        )
-
-        action.create_item(self.current_order, quantity, weight, item_description, unit)
+        has_unit, weight, is_quantity, quantity, unit, item_description, item = action.parse_input(user_input, self.current_order)
         action.execute(quantity, weight, self.current_order, item)
 
         if self.current_order.status == OrderStatus.Confirmed:
@@ -163,15 +145,3 @@ class OrderDialog(ComponentDialog):
             )
 
 
-def parse_all(user_input: str, culture: str) -> List[List[ModelResult]]:
-    return [
-        # Number recognizer - This function will find any number from the input
-        # E.g "I have two apples" will return "2".
-        recognizers_suite.recognize_number(user_input, culture),
-
-        # Dimension recognizer - This function will find any dimension presented E.g "The six-mile trip to my airport
-        # hotel that had taken 20 minutes earlier in the day took more than
-        # three hours." will return "6 Mile"
-        recognizers_suite.recognize_dimension(user_input, culture),
-
-    ]

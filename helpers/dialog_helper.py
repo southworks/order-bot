@@ -1,3 +1,4 @@
+import recognizers_suite
 from botbuilder.core import StatePropertyAccessor, TurnContext
 from botbuilder.dialogs import Dialog, DialogSet, DialogTurnStatus
 
@@ -5,19 +6,6 @@ from data_models import Add, Remove, Confirm, Item, Order, Constants
 
 
 class DialogHelper:
-    @staticmethod
-    async def run_dialog(
-        dialog: Dialog,
-        turn_context: TurnContext,
-        accessor: StatePropertyAccessor,
-    ):
-        dialog_set = DialogSet(accessor)
-        dialog_set.add(dialog)
-
-        dialog_context = await dialog_set.create_context(turn_context)
-        results = await dialog_context.continue_dialog()
-        if results.status == DialogTurnStatus.Empty:
-            await dialog_context.begin_dialog(dialog.id)
 
     @staticmethod
     def recognize_intention(text):
@@ -47,6 +35,7 @@ class DialogHelper:
         weight = None
         has_unit = False
         type_name = match.type_name
+        unit = ''
         if type_name == Constants.number_type_name:
             if '.' in match.resolution.get('value'):
                 has_unit = True
@@ -134,3 +123,17 @@ class DialogHelper:
         order.add_item(item3.quantity, item7.weigth, item7)
 
         return order
+
+    @staticmethod
+    def parse_all(user_input: str, culture: str):
+        return [
+            # Number recognizer - This function will find any number from the input
+            # E.g "I have two apples" will return "2".
+            recognizers_suite.recognize_number(user_input, culture),
+
+            # Dimension recognizer - This function will find any dimension presented E.g "The six-mile trip to my airport
+            # hotel that had taken 20 minutes earlier in the day took more than
+            # three hours." will return "6 Mile"
+            recognizers_suite.recognize_dimension(user_input, culture),
+
+        ]

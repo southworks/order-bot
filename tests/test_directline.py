@@ -1,20 +1,8 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
-"""
-Unit test for testing DirectLine
-To execute:
-    python -m unittest test_py_bot.py
-This assumes a DirectLine configuration json file is available (DirectLineConfig.json)
-that was generated when adding DirectLine to the bot's channel.
-    az bot directline create --name "pyfuntest" --resource-group "pyfuntest" > "DirectLineConfig.json"
-"""
-
-
 import os
 import json
 from unittest import TestCase
 
-from tests.directline_client import DirectLineClient
+from directline_client import DirectLineClient
 
 
 class PyBotTest(TestCase):

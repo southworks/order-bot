@@ -1,6 +1,6 @@
 name: OrderBotTets
 
-on: [push,pull_request]
+on: [pull_request]
 
 jobs:
   build:
@@ -28,5 +28,5 @@ jobs:
       run: |
         pip install pytest
         cd tests
-        cd unit_tests
+        cd functional_tests
         pytest

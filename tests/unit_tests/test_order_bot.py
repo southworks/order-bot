@@ -1,5 +1,6 @@
-from data_models import Order, Item
 from unittest import TestCase
+
+from data_models import Order, Item
 
 
 class TestOrderBot(TestCase):

@@ -30,7 +30,7 @@ class Item:
         if self.unit.description == "":
             return f"{self.quantity} {self.description.capitalize()}"
         elif self.unit.description != "" and self.quantity == 0:
-            return f"{self.weigth}{self.unit.description} of {self.description.capitalize()}"
+            return f"{self.weigth} {self.unit.description} of {self.description.capitalize()}"
         elif (
             self.unit.description != ""
             and self.quantity != 0

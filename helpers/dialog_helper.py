@@ -1,7 +1,7 @@
 from botbuilder.core import StatePropertyAccessor, TurnContext
 from botbuilder.dialogs import Dialog, DialogSet, DialogTurnStatus
 
-from data_models import Add, Remove, Confirm, Unit, Item, Order
+from data_models import Add, Remove, Confirm, Item, Order
 
 
 class DialogHelper:
@@ -33,9 +33,6 @@ class DialogHelper:
         order_list = []
         # TODO: Move this Code to Tests
         # create units
-        unit = Unit(1)
-        unit_gr = Unit(2, "Gr")
-        unit_kg = Unit(3, "Kg")
 
         # create items
         item1 = Item(
@@ -43,49 +40,49 @@ class DialogHelper:
             item_id=1,
             quantity=1,
             description="Coca Cola",
-            unit=unit,
+            unit='',
         )
         item2 = Item(
             product_id=2,
             item_id=2,
             quantity=3,
             description="Agua Mineral",
-            unit=unit,
+            unit='',
         )
         item3 = Item(
             product_id=3,
             item_id=3,
             weight=0.5,
             description="Frutos Secos",
-            unit=unit_kg,
+            unit='Kg',
         )
         item4 = Item(
             product_id=4,
             item_id=4,
             quantity=5,
             description="Alfajor de Arroz",
-            unit=unit,
+            unit='',
         )
         item5 = Item(
             product_id=5,
             item_id=5,
             weight=0.5,
             description="Banana",
-            unit=unit_kg,
+            unit='Kg',
         )
         item6 = Item(
             product_id=6,
             item_id=6,
             weight=0.5,
             description="Manzana",
-            unit=unit_kg,
+            unit='Kg',
         )
         item7 = Item(
             product_id=7,
             item_id=7,
             weight=0.5,
             description="Yerba Organica",
-            unit=unit_kg,
+            unit='Kg',
         )
 
         # create order

@@ -1,7 +1,6 @@
 from .action import Action, Add, Remove, Confirm
 from .item import Item
 from .order import Order, OrderStatus
-from .unit import Unit
 
 __all__ = [
     "Action",
@@ -10,6 +9,5 @@ __all__ = [
     "Confirm",
     "Item",
     "Order",
-    "OrderStatus",
-    "Unit",
+    "OrderStatus"
 ]

@@ -89,9 +89,12 @@ class OrderDialog(ComponentDialog):
                 unit = input
 
         results = parse_all(user_input, DEFAULT_CULTURE)
+        results = [sub_list for sub_list in results if sub_list]
 
-        match = ([sub_list for sub_list in results if sub_list][0]) if results else []
+        match = results[0] if results else []
 
+        quantity = 0
+        weight = 0
         for item in match:
             type_name = item.type_name
             if type_name == Constants.Constants.number_type_name:
@@ -112,11 +115,12 @@ class OrderDialog(ComponentDialog):
 
         action = DialogHelper.recognize_intention(user_input)
 
+        item_description = ''
         if has_unit:
             if 'of' in user_input:
                 user_input = user_input.replace('of', '')
             item_description = user_input[match[0].start + 7:].strip()
-        else:
+        elif is_quantity:
             user_input.strip()
             item_description = user_input[match[0].start + 2:].strip()
 
@@ -136,7 +140,7 @@ class OrderDialog(ComponentDialog):
                 item_id=self.current_order.item_list[-1].item_id + 1,
                 quantity=quantity,
                 weight=weight,
-                unit=unit
+                unit=Unit(1)
             )
 
         action.execute(quantity, weight, self.current_order, item)

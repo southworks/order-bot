@@ -1,5 +1,3 @@
-
-
 from datetime import datetime
 from botbuilder.schema import (
     Activity,

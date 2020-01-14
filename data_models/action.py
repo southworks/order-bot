@@ -1,9 +1,21 @@
+from .item import Item
+
 class Action:
     """ TODO: Add description for Action class. """
 
     def execute(self, quantity, weight, order, item):
         raise NotImplementedError
 
+    @staticmethod
+    def create_item(current_order, quantity, weight, item_description, unit):
+        return Item(
+            product_id=current_order.item_list[-1].product_id + 1,
+            description=item_description,
+            item_id=current_order.item_list[-1].item_id + 1,
+            quantity=quantity,
+            weight=weight,
+            unit= unit
+        )
 
 class Add(Action):
     """ TODO: Add description for Add class. """
@@ -36,3 +48,6 @@ class Confirm(Action):
     @property
     def description(self):
         return "confirmed"
+
+    def create_item(self, quantity, weight, item_description):
+        return None

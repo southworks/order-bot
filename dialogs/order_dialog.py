@@ -14,12 +14,8 @@ from botbuilder.dialogs.prompts import (
 )
 from botbuilder.core import MessageFactory, UserState
 
-from data_models.Constants import Constants, ConstantUnits
-from helpers import DialogHelper
-from data_models import Unit, Item, Order, OrderStatus, Constants
-
-from helpers import activity_helper
-
+from helpers import DialogHelper, activity_helper
+from data_models import Order, OrderStatus, Constants
 import recognizers_suite
 from recognizers_suite import Culture, ModelResult
 
@@ -74,52 +70,17 @@ class OrderDialog(ComponentDialog):
         """
             New step that interprets the user intent, using a split and invoking add and remove
         """
+        unit = ''
+
         step_context.values['input'] = step_context.result
         user_input = step_context.values['input'].lower()
 
-        splitted_input = user_input.split()
-
-        is_quantity = False
-        has_unit = False
-
-        for input in splitted_input:
-            if input in ConstantUnits.units:
-                has_unit = True
-                unit = input
-
-        results = parse_all(user_input, DEFAULT_CULTURE)
-        results = [sub_list for sub_list in results if sub_list]
-
+        results = [sub_list for sub_list in parse_all(user_input, DEFAULT_CULTURE) if sub_list]
         match = [item for sublist in results for item in sublist].pop()
 
-        quantity = 0
-        weight = 0
-        type_name = match.type_name
-        if type_name == Constants.Constants.number_type_name:
-            if '.' in match.resolution.get('value'):
-                has_unit = True
-                quantity = 0
-                weight = float(match.resolution.get('value'))
-            else:
-                is_quantity = True
-                quantity = int(match.resolution.get('value'))
-                weight = 0
-                unit = ''
-        elif type_name == Constants.Constants.dimension_type_name:
-            has_unit = True
-            weight = float(match.resolution.get('value'))
-            quantity = 0
-
+        has_unit, weight, is_quantity, quantity, unit = DialogHelper.resolve_quantity_and_weigh(match)
         action = DialogHelper.recognize_intention(user_input)
-
-        item_description = ''
-        if has_unit:
-            if 'of' in user_input:
-                user_input = user_input.replace('of', '')
-            item_description = user_input[match.start + len(match.text):].strip()
-        elif is_quantity:
-            user_input.strip()
-            item_description = user_input[match.start + len(match.text):].strip()
+        item_description = DialogHelper.normalize_description(has_unit, is_quantity, user_input, match)
 
         item = next(
             (
@@ -130,16 +91,7 @@ class OrderDialog(ComponentDialog):
             None,
         )
 
-        if not item and action.description != "confirmed":
-            item = Item(
-                product_id=self.current_order.item_list[-1].product_id + 1,
-                description=item_description,
-                item_id=self.current_order.item_list[-1].item_id + 1,
-                quantity=quantity,
-                weight=weight,
-                unit=Unit(2, unit)
-            )
-
+        action.create_item(self.current_order, quantity, weight, item_description, unit)
         action.execute(quantity, weight, self.current_order, item)
 
         if self.current_order.status == OrderStatus.Confirmed:
@@ -196,17 +148,17 @@ class OrderDialog(ComponentDialog):
                 self.id, step_context.result
             )
 
-    async def show_action_taken(self, step_context, quantity=0, weight=0, item_description='', unit='', action=None):
+    async def show_action_taken(self, step_context, quantity=None, weight=None, item_description='', unit='', action=None):
         if quantity:
             await step_context.context.send_activity(
                 MessageFactory.text(
-                    f"{quantity} {item_description.capitalize()} was {action.description}!"
+                    f"{quantity} {item_description} was {action.description}!"
                 )
             )
         elif weight:
             await step_context.context.send_activity(
                 MessageFactory.text(
-                    f"{weight} {unit} of {item_description.capitalize()} was {action.description}!"
+                    f"{weight} {unit} of {item_description} was {action.description}!"
                 )
             )
 

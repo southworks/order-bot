@@ -1,4 +1,3 @@
-from .unit import Unit
 
 
 class Item:
@@ -12,7 +11,7 @@ class Item:
         known_names: str = None,
         quantity: float = 0,
         weight: float = 0,
-        unit: Unit = None,
+        unit='',
     ):
         self.product_id = product_id
         self.description = description
@@ -27,13 +26,13 @@ class Item:
     def to_string(self) -> str:
         """ returns a text representation of the Item """
         # TODO: check if the description is ""
-        if self.unit.description == "":
-            return f"{self.quantity} {self.description.capitalize()}"
-        elif self.unit.description != "" and self.quantity == 0:
-            return f"{self.weigth}{self.unit.description} of {self.description.capitalize()}"
+        if self.unit == '':
+            return f'{self.quantity} {self.description.capitalize()}'
+        elif self.unit != '' and self.quantity == 0:
+            return f'{self.weigth} {self.unit} of {self.description.capitalize()}'
         elif (
-            self.unit.description != ""
+            self.unit != ''
             and self.quantity != 0
             and self.weigth != 0
         ):
-            return f"{self.quantity} {self.description.capitalize()} of {self.weigth}{self.unit.description}"
+            return f'{self.quantity} {self.description.capitalize()} of {self.weigth}{self.unit}'

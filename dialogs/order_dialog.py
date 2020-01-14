@@ -14,7 +14,8 @@ from botbuilder.dialogs.prompts import (
 )
 from botbuilder.core import MessageFactory, UserState
 
-from data_models.Constants import U
+import data_models.Constants as Constants
+from data_models.Constants import Constants, ConstantUnits
 from helpers import DialogHelper
 from data_models import Unit, Item, Order, OrderStatus, Constants
 
@@ -83,98 +84,95 @@ class OrderDialog(ComponentDialog):
         has_unit = False
 
         for input in splitted_input:
-            if input in U.units:
+            if input in ConstantUnits.units:
                 has_unit = True
                 unit = input
 
         results = parse_all(user_input, DEFAULT_CULTURE)
 
-        matches = ([sub_list for sub_list in results if sub_list][0]) if results else []
+        match = ([sub_list for sub_list in results if sub_list][0]) if results else []
 
-        for item in matches:
+        for item in match:
             type_name = item.type_name
-            if type_name == Constants.number_type_name:
-                is_quantity = True
-                quantity = int(item.resolution.get('value'))
-            elif type_name == Constants.dimension_type_name:
+            if type_name == Constants.Constants.number_type_name:
+                if '.' in item.resolution.get('value'):
+                    has_unit = True
+                    quantity = 0
+                    weight = float(item.resolution.get('value'))
+                else:
+                    is_quantity = True
+                    quantity = int(item.resolution.get('value'))
+                    weight = 0
+                    unit = 'unit'
+            elif type_name == Constants.Constants.dimension_type_name:
                 has_unit = True
-                weight = float(item.resolution.get('value'))
+                weight = item.resolution.get('value')
+                quantity = 0
                 unit = item.resolution.get('unit')
 
-        # unit = Unit(1)
-        # step_context.values["input"] = step_context.result
-        # query = str(step_context.result).lower()
-        # splitted = query.split()
-        #
         action = DialogHelper.recognize_intention(user_input)
-        #
-        # if len(splitted) > 1:
-        #     item_description = query[
-        #         query.find((splitted[2])[0]):
-        #     ].capitalize()
-        # else:
-        #     item_description = splitted[0]
-        #
-        # item = next(
-        #     (
-        #         x
-        #         for x in self.current_order.item_list
-        #         if x.description.lower() == item_description.lower()
-        #     ),
-        #     None,
-        # )
-        #
-        # is_item = True if item else False
-        #
-        # item_quantity = int(splitted[1]) if is_item and item.weigth == 0 else 0
-        # item_weight = int(splitted[1]) if is_item and item.quantity == 0 else 0
-        # if not item and action.description != "confirmed":
-        #     item = Item(
-        #         product_id=self.current_order.item_list[-1].product_id + 1,
-        #         description=item_description,
-        #         item_id=self.current_order.item_list[-1].item_id + 1,
-        #         quantity=int(splitted[1]),
-        #         unit=unit,
-        #     )
-        #     item_quantity = item.quantity
-        #     item_weight = item.weigth
-        #
-        # action.execute(item_quantity, item_weight, self.current_order, item)
-        #
-        # if self.current_order.status == OrderStatus.Confirmed:
-        #     if (
-        #         type(step_context.result) is bool and not step_context.result
-        #     ) or (
-        #         type(step_context.result) is str
-        #         and "confirm" not in step_context.result.lower()
-        #     ):
-        #         prompt_message = MessageFactory.text(
-        #             "I don't want to do that right now"
-        #         )
-        #         await step_context.prompt(
-        #             TextPrompt.__name__, PromptOptions(prompt=prompt_message)
-        #         )
-        #
-        #         return await step_context.end_dialog()
-        #     elif (
-        #         type(step_context.result) is bool and step_context.result
-        #     ) or (
-        #         type(step_context.result) is str
-        #         and "confirm" in step_context.result.lower()
-        #     ):
-        #         return await step_context.prompt(
-        #             ConfirmPrompt.__name__,
-        #             PromptOptions(
-        #                 prompt=MessageFactory.text(
-        #                     "You want to confirm this order?"
-        #                 )
-        #             ),
-        #         )
-        # await step_context.context.send_activity(
-        #     MessageFactory.text(
-        #         f"{splitted[1]} {item_description} was {action.description}!"
-        #     )
-        # )
+
+        if has_unit:
+            if 'of' in user_input:
+                user_input = user_input.replace('of', '')
+            item_description = user_input[match[0].start + 7:].strip()
+        else:
+            user_input.strip()
+            item_description = user_input[match[0].start + 2:].strip()
+
+        item = next(
+            (
+                x
+                for x in self.current_order.item_list
+                if x.description.lower() == item_description.lower()
+            ),
+            None,
+        )
+
+        if not item and action.description != "confirmed":
+            item = Item(
+                product_id=self.current_order.item_list[-1].product_id + 1,
+                description=item_description,
+                item_id=self.current_order.item_list[-1].item_id + 1,
+                quantity=quantity,
+                weight=weight,
+                unit=unit
+            )
+
+        action.execute(quantity, weight, self.current_order, item)
+
+        if self.current_order.status == OrderStatus.Confirmed:
+            if (
+                type(step_context.result) is bool and not step_context.result
+            ) or (
+                type(step_context.result) is str
+                and "confirm" not in step_context.result.lower()
+            ):
+                prompt_message = MessageFactory.text(
+                    "I don't want to do that right now"
+                )
+                await step_context.prompt(
+                    TextPrompt.__name__, PromptOptions(prompt=prompt_message)
+                )
+
+                return await step_context.end_dialog()
+            elif (
+                type(step_context.result) is bool and step_context.result
+            ) or (
+                type(step_context.result) is str
+                and "confirm" in step_context.result.lower()
+            ):
+                return await step_context.prompt(
+                    ConfirmPrompt.__name__,
+                    PromptOptions(
+                        prompt=MessageFactory.text(
+                            "You want to confirm this order?"
+                        )
+                    ),
+                )
+
+        await self.show_action_taken(step_context, quantity, weight, item_description, unit, action)
+
         return await step_context.replace_dialog(self.id, step_context.result)
 
     async def goodbye_step(
@@ -195,6 +193,20 @@ class OrderDialog(ComponentDialog):
         else:
             return await step_context.replace_dialog(
                 self.id, step_context.result
+            )
+
+    async def show_action_taken(self, step_context, quantity=0, weight=0, item_description='', unit='', action=None):
+        if quantity:
+            await step_context.context.send_activity(
+                MessageFactory.text(
+                    f"{quantity} {item_description.capitalize()} was {action.description}!"
+                )
+            )
+        elif weight:
+            await step_context.context.send_activity(
+                MessageFactory.text(
+                    f"{weight} {unit} of {item_description.capitalize()} was {action.description}!"
+                )
             )
 
 

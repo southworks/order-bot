@@ -19,13 +19,19 @@ az bot directline create --name appName --resource-group resourceGroup > "Direct
 Running the bot and testing it is simple:
 
 1. Clone the project `git clone https://github.com/southworks/order-bot.git` 
+
 2. Open the project (using PyCharm, VSCode or... Notepad++? Who am I to judge)
+
 3. Go to a command line, go to the project directory and run `python app.py`. Check for common issues and how to solve them [here]()
-*insert cmd image*
+
 4. The cmd should now say "Running on http://localhost:PORT", where PORT will be a number.
-*insert running image*
+![*insert cmd image*](https://github.com/southworks/order-bot/blob/master/documentation/readme_screenshots/pycharm64_c0feHXTETT.png)
+
 5. Copy that URL into the Emulator and add '/api/message' to the end ->  http://localhost:PORT/api/message 
-*insert emulator config image*
+
+![*insert emulator config image*](https://github.com/southworks/order-bot/blob/master/documentation/readme_screenshots/Bot_Framework_Emulator_bMxNfN0N5r.png)
+
 6. Done! Now you should have something like this:
-*insert image of working bot*
+
+![*insert image of working bot*](https://github.com/southworks/order-bot/blob/master/documentation/readme_screenshots/Bot_Framework_Emulator_wTX09dpSCY.png)
 

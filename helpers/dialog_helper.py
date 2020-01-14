@@ -55,9 +55,9 @@ class DialogHelper:
         item3 = Item(
             product_id=3,
             item_id=3,
-            weight=500,
+            weight=0.5,
             description="Frutos Secos",
-            unit=unit_gr,
+            unit=unit_kg,
         )
         item4 = Item(
             product_id=4,
@@ -69,23 +69,23 @@ class DialogHelper:
         item5 = Item(
             product_id=5,
             item_id=5,
-            weight=500,
+            weight=0.5,
             description="Banana",
-            unit=unit_gr,
+            unit=unit_kg,
         )
         item6 = Item(
             product_id=6,
             item_id=6,
-            weight=500,
+            weight=0.5,
             description="Manzana",
-            unit=unit_gr,
+            unit=unit_kg,
         )
         item7 = Item(
             product_id=7,
             item_id=7,
-            weight=500,
+            weight=0.5,
             description="Yerba Organica",
-            unit=unit_gr,
+            unit=unit_kg,
         )
 
         # create order

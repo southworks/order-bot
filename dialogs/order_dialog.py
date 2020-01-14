@@ -14,10 +14,10 @@ from botbuilder.dialogs.prompts import (
 )
 from botbuilder.core import MessageFactory, UserState
 
-import data_models.Constants as Constants
-from data_models.Constants import Constants, ConstantUnits
+import data_models.constants as Constants
+from data_models.constants import Constants, ConstantUnits
 from helpers import DialogHelper
-from data_models import Unit, Item, Order, OrderStatus, Constants
+from data_models import Unit, Item, Order, OrderStatus, constants
 
 from helpers import activity_helper
 
@@ -91,27 +91,26 @@ class OrderDialog(ComponentDialog):
         results = parse_all(user_input, DEFAULT_CULTURE)
         results = [sub_list for sub_list in results if sub_list]
 
-        match = results[0] if results else []
+        match = [item for sublist in results for item in sublist].pop()
 
         quantity = 0
         weight = 0
-        for item in match:
-            type_name = item.type_name
-            if type_name == Constants.Constants.number_type_name:
-                if '.' in item.resolution.get('value'):
-                    has_unit = True
-                    quantity = 0
-                    weight = float(item.resolution.get('value'))
-                else:
-                    is_quantity = True
-                    quantity = int(item.resolution.get('value'))
-                    weight = 0
-                    unit = 'unit'
-            elif type_name == Constants.Constants.dimension_type_name:
+        type_name = match.type_name
+        if type_name == constants.Constants.number_type_name:
+            if '.' in match.resolution.get('value'):
                 has_unit = True
-                weight = item.resolution.get('value')
                 quantity = 0
-                unit = item.resolution.get('unit')
+                weight = float(match.resolution.get('value'))
+            else:
+                is_quantity = True
+                quantity = int(match.resolution.get('value'))
+                weight = 0
+                unit = 'unit'
+        elif type_name == constants.Constants.dimension_type_name:
+            has_unit = True
+            weight = float(match.resolution.get('value'))
+            quantity = 0
+            unit = match.resolution.get('unit')
 
         action = DialogHelper.recognize_intention(user_input)
 
@@ -119,10 +118,10 @@ class OrderDialog(ComponentDialog):
         if has_unit:
             if 'of' in user_input:
                 user_input = user_input.replace('of', '')
-            item_description = user_input[match[0].start + 7:].strip()
+            item_description = user_input[match.start + len(match.text):].strip()
         elif is_quantity:
             user_input.strip()
-            item_description = user_input[match[0].start + 2:].strip()
+            item_description = user_input[match.start + len(match.text):].strip()
 
         item = next(
             (
@@ -220,44 +219,9 @@ def parse_all(user_input: str, culture: str) -> List[List[ModelResult]]:
         # E.g "I have two apples" will return "2".
         recognizers_suite.recognize_number(user_input, culture),
 
-        # Ordinal number recognizer - This function will find any ordinal number
-        # E.g "eleventh" will return "11".
-        recognizers_suite.recognize_ordinal(user_input, culture),
-
-        # Percentage recognizer - This function will find any number presented as percentage
-        # E.g "one hundred percents" will return "100%"
-        recognizers_suite.recognize_percentage(user_input, culture),
-
-        # Age recognizer - This function will find any age number presented
-        # E.g "After ninety five years of age, perspectives change" will return
-        # "95 Year"
-        recognizers_suite.recognize_age(user_input, culture),
-
-        # Currency recognizer - This function will find any currency presented
-        # E.g "Interest expense in the 1988 third quarter was $ 75.3 million"
-        # will return "75300000 Dollar"
-        recognizers_suite.recognize_currency(user_input, culture),
-
         # Dimension recognizer - This function will find any dimension presented E.g "The six-mile trip to my airport
         # hotel that had taken 20 minutes earlier in the day took more than
         # three hours." will return "6 Mile"
         recognizers_suite.recognize_dimension(user_input, culture),
-
-        # Temperature recognizer - This function will find any temperature presented
-        # E.g "Set the temperature to 30 degrees celsius" will return "30 C"
-        recognizers_suite.recognize_temperature(user_input, culture),
-
-        # DateTime recognizer - This function will find any Date even if its write in colloquial language -
-        # E.g "I'll go back 8pm today" will return "2017-10-04 20:00:00"
-        recognizers_suite.recognize_datetime(user_input, culture),
-
-        # PhoneNumber recognizer will find any phone number presented
-        # E.g "My phone number is ( 19 ) 38294427."
-        recognizers_suite.recognize_phone_number(user_input, culture),
-
-        # Email recognizer will find any phone number presented
-        # E.g "Please write to me at Dave@abc.com for more information on task
-        # #A1"
-        recognizers_suite.recognize_email(user_input, culture),
 
     ]

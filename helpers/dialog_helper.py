@@ -61,14 +61,12 @@ class DialogHelper:
             item_id=1,
             quantity=1,
             description="Coca Cola",
-            unit="kg",
         )
         item2 = Item(
             product_id=2,
             item_id=2,
             quantity=3,
             description="Agua Mineral",
-            unit="gr",
         )
         item3 = Item(
             product_id=3,

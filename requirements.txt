@@ -1,3 +1,4 @@
+requests
 aiohttp
 botbuilder
 botbuilder-dialogs>=4.4.0.b1

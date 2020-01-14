@@ -1,6 +1,7 @@
-name: OrderBotTets
-
-on: [pull_request]
+name: OrderBotTets - Directline
+on:
+  schedule:
+    - cron:  '0 9,17 * * *'
 
 jobs:
   build:
@@ -27,4 +28,4 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest
-        python -m unittest tests/test_order_bot.py
+        python -m unittest tests/test_directline.py

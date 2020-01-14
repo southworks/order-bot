@@ -71,12 +71,13 @@ class Order:
 
     def generate_list_items_card(self) -> Attachment:
         from pyadaptivecards.card import AdaptiveCard
-        from pyadaptivecards.inputs import Text, Number
         from pyadaptivecards.components import TextBlock
-        from pyadaptivecards.actions import Submit
+        from pyadaptivecards.actions import Submit, OpenUrl, ShowCard
 
         body = []
         greeting = TextBlock("Current order", color="good", weight="bolder", size="medium")
+
+        # submit = OpenUrl(url='http://www.google.com', title='Open url')
         submit = Submit(title="Confirm Order")
 
         body.append(greeting)
@@ -88,7 +89,6 @@ class Order:
                 item_desc = TextBlock(f'{item.weigth}{item.unit.description} {item.description}')
             body.append(item_desc)
 
-        # card = AdaptiveCard(body=body, actions=[submit])
         card = AdaptiveCard(body=body, actions=[submit])
 
         # Create attachment
@@ -96,6 +96,7 @@ class Order:
             "contentType": "application/vnd.microsoft.card.adaptive",
             "content": card.to_dict()
         }
+        data_value = attachment['content']['actions'][0]['data'] = 'Confirm'
 
         return attachment
 

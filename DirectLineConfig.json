@@ -1,0 +1,34 @@
+{
+  "etag": "W/\"a5d83dd4148a00166105db9a266ee7ef1/13/2020 7:24:40 PM\"",
+  "id": "/subscriptions/28b01fda-097c-4246-a0c8-1e1cfc302723/resourceGroups/manx-stable/providers/Microsoft.BotService/botServices/pythonAdapterTestBot/channels/DirectLineChannel",
+  "kind": null,
+  "location": "global",
+  "name": "pythonAdapterTestBot/DirectLineChannel",
+  "properties": {
+    "channelName": "DirectLineChannel",
+    "etag": "W/\"a5d83dd4148a00166105db9a266ee7ef1/13/2020 7:24:40 PM\"",
+    "location": "global",
+    "properties": {
+      "DirectLineEmbedCode": null,
+      "sites": [
+        {
+          "isBlockUserUploadEnabled": false,
+          "isEnabled": true,
+          "isSecureSiteEnabled": false,
+          "isV1Enabled": true,
+          "isV3Enabled": true,
+          "key": "6xdytklIINU.EBq-b0L6T2TsAwUGUQ2w2EO7zefoSGKEvijR1pMTl9c",
+          "key2": "6xdytklIINU.ADEsGgmxcVZj6oaQf-l8fn8n6W7ck1WloSqy1V0nyx4",
+          "siteId": "6xdytklIINU",
+          "siteName": "Default Site",
+          "trustedOrigins": null
+        }
+      ]
+    },
+    "provisioningState": "Succeeded"
+  },
+  "resourceGroup": "manx-stable",
+  "sku": null,
+  "tags": null,
+  "type": "Microsoft.BotService/botServices/channels"
+}

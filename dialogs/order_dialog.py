@@ -16,7 +16,7 @@ from botbuilder.core import MessageFactory, UserState
 
 from data_models.Constants import Constants, ConstantUnits
 from helpers import DialogHelper
-from data_models import Unit, Item, Order, OrderStatus, Constants
+from data_models import Item, Order, OrderStatus, Constants
 
 from helpers import activity_helper
 
@@ -137,7 +137,7 @@ class OrderDialog(ComponentDialog):
                 item_id=self.current_order.item_list[-1].item_id + 1,
                 quantity=quantity,
                 weight=weight,
-                unit=Unit(2, unit)
+                unit=unit
             )
 
         action.execute(quantity, weight, self.current_order, item)

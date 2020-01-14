@@ -38,9 +38,9 @@ class Order:
         """
         if quantity != 0 and quantity >= item.quantity or weight != 0 and weight >= item.weigth:
             self.item_list.remove(item)
-        elif item.unit.description == "" and quantity != 0:
+        elif item.unit == "" and quantity != 0:
             item.quantity -= quantity
-        elif item.unit.description != "" and weight != 0:
+        elif item.unit != "" and weight != 0:
             item.weigth -= weight
 
     def confirm_order(self):
@@ -78,10 +78,10 @@ class Order:
         body.append(greeting)
 
         for item in self.item_list:
-            if item.unit.description == '':
+            if item.unit == '':
                 item_desc = TextBlock(f'{item.quantity} {item.description.capitalize()}')
             else:
-                item_desc = TextBlock(f'{item.weigth} {item.unit.description.capitalize()} {item.description.capitalize()}')
+                item_desc = TextBlock(f'{item.weigth} {item.unit.capitalize()} {item.description.capitalize()}')
             body.append(item_desc)
 
         # card = AdaptiveCard(body=body, actions=[submit])

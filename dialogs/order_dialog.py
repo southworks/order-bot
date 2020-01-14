@@ -185,7 +185,7 @@ class OrderDialog(ComponentDialog):
                 type(step_context.result) is bool and not step_context.result
             ) or (
                 type(step_context.result) is str
-                and not "confirm" in step_context.result.lower()
+                and "confirm" not in step_context.result.lower()
             ):
                 prompt_message = MessageFactory.text(
                     "I don't want to do that right now"

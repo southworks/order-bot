@@ -1,14 +1,14 @@
 from unittest import TestCase
 
-from data_models import Order, Item
+import data_models
 
 
 class TestOrderBot(TestCase):
 
     @staticmethod
     def test_adding_item():
-        order = Order(0)
-        item = Item(1, "Item1", 1)
+        order = data_models.Order(0)
+        item = data_models.Item(1, "Item1", 1)
         item.description = "item1"
         item.quantity = 1
         order.add_item(1, 0, item)

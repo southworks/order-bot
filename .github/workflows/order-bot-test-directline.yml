@@ -1,4 +1,4 @@
-name: OrderBotTets
+name: OrderBotTets - Directline
 
 on: [pull_request]
 
@@ -27,6 +27,4 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest
-        cd tests
-        cd functional_tests
-        pytest
+        python -m unittest tests/test_directline.py

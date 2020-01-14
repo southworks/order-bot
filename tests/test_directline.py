@@ -2,13 +2,13 @@ import os
 import json
 from unittest import TestCase
 
-from directline_client import DirectLineClient
+from .directline_client import DirectLineClient
 
 
 class PyBotTest(TestCase):
     def setUp(self):
         direct_line_config = os.environ.get(
-            "DIRECT_LINE_CONFIG", "../../DirectLineConfig.json"
+            "DIRECT_LINE_CONFIG", "DirectLineConfig.json"
         )
         with open(direct_line_config) as direct_line_file:
             self.direct_line_config = json.load(direct_line_file)

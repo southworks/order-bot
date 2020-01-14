@@ -1,6 +1,7 @@
 name: OrderBotTets - Directline
-
-on: [pull_request]
+on:
+  schedule:
+    - cron:  '0 9,17 * * *'
 
 jobs:
   build:

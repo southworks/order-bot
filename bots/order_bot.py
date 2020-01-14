@@ -4,7 +4,7 @@ from botbuilder.core import (
     UserState,
     CardFactory,
     MessageFactory,
-)
+    StatePropertyAccessor)
 from botbuilder.schema import (
     ChannelAccount,
     HeroCard,
@@ -20,9 +20,7 @@ from botbuilder.core import (
     UserState,
     MessageFactory,
 )
-from botbuilder.dialogs import Dialog
-
-from helpers import DialogHelper
+from botbuilder.dialogs import Dialog, DialogSet, DialogTurnStatus
 
 
 class OrderBot(ActivityHandler):
@@ -72,8 +70,22 @@ class OrderBot(ActivityHandler):
         """
         Respond to messages sent from the user.
         """
-        await DialogHelper.run_dialog(
+        await self.run_dialog(
             self.dialog,
             turn_context,
             self.conversation_state.create_property("DialogState"),
         )
+
+    @staticmethod
+    async def run_dialog(
+        dialog: Dialog,
+        turn_context: TurnContext,
+        accessor: StatePropertyAccessor,
+    ):
+        dialog_set = DialogSet(accessor)
+        dialog_set.add(dialog)
+
+        dialog_context = await dialog_set.create_context(turn_context)
+        results = await dialog_context.continue_dialog()
+        if results.status == DialogTurnStatus.Empty:
+            await dialog_context.begin_dialog(dialog.id)

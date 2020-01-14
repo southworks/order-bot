@@ -14,10 +14,11 @@ from botbuilder.dialogs.prompts import (
 )
 from botbuilder.core import MessageFactory, UserState
 
-from helpers import DialogHelper
-from data_models import Unit, Item, Order, OrderStatus
+from helpers import DialogHelper, activity_helper
+from data_models import Order, OrderStatus
+from recognizers_suite import Culture
 
-from helpers import activity_helper
+DEFAULT_CULTURE = Culture.English
 
 
 class OrderDialog(ComponentDialog):
@@ -68,52 +69,19 @@ class OrderDialog(ComponentDialog):
         """
             New step that interprets the user intent, using a split and invoking add and remove
         """
-        unit = Unit(1)
-        step_context.values["input"] = step_context.result
-        query = str(step_context.result).lower()
-        splitted = query.split()
 
-        action = DialogHelper.recognize_intention(query)
-
-        if len(splitted) > 1:
-            item_description = query[
-                query.find((splitted[2])[0]):
-            ].capitalize()
-        else:
-            item_description = splitted[0]
-
-        item = next(
-            (
-                x
-                for x in self.current_order.item_list
-                if x.description.lower() == item_description.lower()
-            ),
-            None,
-        )
-
-        is_item = True if item else False
-
-        item_quantity = int(splitted[1]) if is_item and item.weigth == 0 else 0
-        item_weight = int(splitted[1]) if is_item and item.quantity == 0 else 0
-        if not item and action.description != "confirmed":
-            item = Item(
-                product_id=self.current_order.item_list[-1].product_id + 1,
-                description=item_description,
-                item_id=self.current_order.item_list[-1].item_id + 1,
-                quantity=int(splitted[1]),
-                unit=unit,
-            )
-            item_quantity = item.quantity
-            item_weight = item.weigth
-
-        action.execute(item_quantity, item_weight, self.current_order, item)
+        step_context.values['input'] = step_context.result
+        user_input = step_context.values['input'].lower()
+        action = DialogHelper.recognize_intention(user_input)
+        has_unit, weight, is_quantity, quantity, unit, item_description, item = action.parse_input(user_input, self.current_order)
+        action.execute(quantity, weight, self.current_order, item)
 
         if self.current_order.status == OrderStatus.Confirmed:
             if (
                 type(step_context.result) is bool and not step_context.result
             ) or (
                 type(step_context.result) is str
-                and not "confirm" in step_context.result.lower()
+                and "confirm" not in step_context.result.lower()
             ):
                 prompt_message = MessageFactory.text(
                     "I don't want to do that right now"
@@ -137,11 +105,9 @@ class OrderDialog(ComponentDialog):
                         )
                     ),
                 )
-        await step_context.context.send_activity(
-            MessageFactory.text(
-                f"{splitted[1]} {item_description} was {action.description}!"
-            )
-        )
+
+        await self.show_action_taken(step_context, quantity, weight, item_description, unit, action)
+
         return await step_context.replace_dialog(self.id, step_context.result)
 
     async def goodbye_step(
@@ -163,3 +129,19 @@ class OrderDialog(ComponentDialog):
             return await step_context.replace_dialog(
                 self.id, step_context.result
             )
+
+    async def show_action_taken(self, step_context, quantity=None, weight=None, item_description='', unit='', action=None):
+        if quantity:
+            await step_context.context.send_activity(
+                MessageFactory.text(
+                    f"{quantity} {item_description} was {action.description}!"
+                )
+            )
+        elif weight:
+            await step_context.context.send_activity(
+                MessageFactory.text(
+                    f"{weight} {unit} of {item_description} was {action.description}!"
+                )
+            )
+
+

@@ -1,12 +1,12 @@
 {
-  "etag": "W/\"a5d83dd4148a00166105db9a266ee7ef1/13/2020 7:24:40 PM\"",
+  "etag": "W/\"a5d83dd4148a00166105db9a266ee7ef1/14/2020 12:55:14 PM\"",
   "id": "/subscriptions/28b01fda-097c-4246-a0c8-1e1cfc302723/resourceGroups/manx-stable/providers/Microsoft.BotService/botServices/pythonAdapterTestBot/channels/DirectLineChannel",
   "kind": null,
   "location": "global",
   "name": "pythonAdapterTestBot/DirectLineChannel",
   "properties": {
     "channelName": "DirectLineChannel",
-    "etag": "W/\"a5d83dd4148a00166105db9a266ee7ef1/13/2020 7:24:40 PM\"",
+    "etag": "W/\"a5d83dd4148a00166105db9a266ee7ef1/14/2020 12:55:14 PM\"",
     "location": "global",
     "properties": {
       "DirectLineEmbedCode": null,

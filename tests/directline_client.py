@@ -68,7 +68,7 @@ class DirectLineClient:
                     if activities_count > 0:
                         return (
                             bot_response,
-                            json_response["activities"][activities_count - 1]["text"],
+                            json_response["activities"][activities_count - 1]["attachments"][0]['content']['body'],
                         )
                     return bot_response, "No new messages"
         return bot_response, "error contacting bot for response"

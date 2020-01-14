@@ -14,10 +14,9 @@ from botbuilder.dialogs.prompts import (
 )
 from botbuilder.core import MessageFactory, UserState
 
-import data_models.constants as Constants
-from data_models.constants import Constants, ConstantUnits
+from data_models.Constants import Constants, ConstantUnits
 from helpers import DialogHelper
-from data_models import Unit, Item, Order, OrderStatus, constants
+from data_models import Unit, Item, Order, OrderStatus, Constants
 
 from helpers import activity_helper
 
@@ -96,7 +95,7 @@ class OrderDialog(ComponentDialog):
         quantity = 0
         weight = 0
         type_name = match.type_name
-        if type_name == constants.Constants.number_type_name:
+        if type_name == Constants.Constants.number_type_name:
             if '.' in match.resolution.get('value'):
                 has_unit = True
                 quantity = 0
@@ -105,12 +104,11 @@ class OrderDialog(ComponentDialog):
                 is_quantity = True
                 quantity = int(match.resolution.get('value'))
                 weight = 0
-                unit = 'unit'
-        elif type_name == constants.Constants.dimension_type_name:
+                unit = ''
+        elif type_name == Constants.Constants.dimension_type_name:
             has_unit = True
             weight = float(match.resolution.get('value'))
             quantity = 0
-            unit = match.resolution.get('unit')
 
         action = DialogHelper.recognize_intention(user_input)
 
@@ -139,7 +137,7 @@ class OrderDialog(ComponentDialog):
                 item_id=self.current_order.item_list[-1].item_id + 1,
                 quantity=quantity,
                 weight=weight,
-                unit=Unit(1)
+                unit=Unit(2, unit)
             )
 
         action.execute(quantity, weight, self.current_order, item)

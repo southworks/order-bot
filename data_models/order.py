@@ -79,9 +79,9 @@ class Order:
 
         for item in self.item_list:
             if item.unit.description == '':
-                item_desc = TextBlock(f'{item.quantity} {item.description}')
+                item_desc = TextBlock(f'{item.quantity} {item.description.capitalize()}')
             else:
-                item_desc = TextBlock(f'{item.weigth}{item.unit.description} {item.description}')
+                item_desc = TextBlock(f'{item.weigth} {item.unit.description.capitalize()} {item.description.capitalize()}')
             body.append(item_desc)
 
         # card = AdaptiveCard(body=body, actions=[submit])

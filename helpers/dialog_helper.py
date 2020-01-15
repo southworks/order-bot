@@ -112,13 +112,12 @@ class DialogHelper:
 
         order.item_list.clear()
 
-        order.add_item(item1.quantity, item1.weigth, item1)
-        order.add_item(item2.quantity, item2.weigth, item2)
-        order.add_item(item3.quantity, item3.weigth, item3)
-        order.add_item(item3.quantity, item4.weigth, item4)
-        order.add_item(item3.quantity, item5.weigth, item5)
-        order.add_item(item3.quantity, item6.weigth, item6)
-        order.add_item(item3.quantity, item7.weigth, item7)
+        # order.add_item(item1.quantity, item1.weight, item1)
+        # order.add_item(item2.quantity, item2.weight, item2)
+        # ...
+        # order.add_item(item3.quantity, item7.weight, item7)
+
+        order.read_json_data_from_file()
 
         return order
 

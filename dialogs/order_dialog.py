@@ -113,8 +113,10 @@ class OrderDialog(ComponentDialog):
     async def goodbye_step(
         self, step_context: WaterfallStepContext
     ) -> DialogTurnResult:
-        """ TODO: Add description for OrderDialog.second_step """
         if step_context.result:
+            # confirm order: write file
+            self.current_order.write_json_data_to_file()
+
             await step_context.context.send_activity(
                 MessageFactory.text("The order was confirmed!")
             )

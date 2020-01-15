@@ -21,18 +21,17 @@ class Item:
         self.known_names = known_names
         self.quantity = quantity
         self.unit = unit
-        self.weigth = weight
+        self.weight = weight
 
     def to_string(self) -> str:
         """ returns a text representation of the Item """
-        # TODO: check if the description is ""
         if self.unit == '':
             return f'{self.quantity} {self.description.capitalize()}'
         elif self.unit != '' and self.quantity == 0:
-            return f'{self.weigth} {self.unit} of {self.description.capitalize()}'
+            return f'{self.weight} {self.unit} of {self.description.capitalize()}'
         elif (
-            self.unit != ''
-            and self.quantity != 0
-            and self.weigth != 0
+                self.unit != ''
+                and self.quantity != 0
+                and self.weight != 0
         ):
-            return f'{self.quantity} {self.description.capitalize()} of {self.weigth}{self.unit}'
+            return f'{self.quantity} {self.description.capitalize()} of {self.weight}{self.unit}'

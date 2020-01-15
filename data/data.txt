@@ -1,0 +1,60 @@
+{
+    "items": [
+        {
+            "product_id": "1",
+            "item_id": "1",
+            "description": "Coca Cola",
+            "quantity": 3,
+            "weight": 0,
+            "unit": ""
+        },
+        {
+            "product_id": "2",
+            "item_id": "2",
+            "description": "Agua Mineral",
+            "quantity": "2",
+            "weight": 0,
+            "unit": ""
+        },
+        {
+            "product_id": "3",
+            "item_id": "3",
+            "description": "Frutos Secos",
+            "quantity": 0,
+            "weight": "0.5",
+            "unit": "kg"
+        },
+        {
+            "product_id": "4",
+            "item_id": "4",
+            "description": "Alfajor de Arroz",
+            "quantity": 3,
+            "weight": 0.0,
+            "unit": ""
+        },
+        {
+            "product_id": "5",
+            "item_id": "5",
+            "description": "Banana",
+            "quantity": 0,
+            "weight": "0.5",
+            "unit": "kg"
+        },
+        {
+            "product_id": "6",
+            "item_id": "6",
+            "description": "Manzana",
+            "quantity": 0,
+            "weight": "0.5",
+            "unit": "kg"
+        },
+        {
+            "product_id": "7",
+            "item_id": "7",
+            "description": "Yerba Organica",
+            "quantity": 0,
+            "weight": "0.5",
+            "unit": "kg"
+        }
+    ]
+}

@@ -11,10 +11,18 @@ class Action:
 
     @staticmethod
     def create_item(current_order, quantity, weight, item_description, unit):
+        try:
+            new_product_id: int = int(current_order.item_list[-1].product_id) + 1
+            new_item_id: int = int(current_order.item_list[-1].item_id) + 1
+        except ValueError:
+            print('product_id NaN')
+            new_product_id = -1
+            new_item_id = -1
+
         return Item(
-            product_id=current_order.item_list[-1].product_id + 1,
+            product_id=new_product_id,
             description=item_description,
-            item_id=current_order.item_list[-1].item_id + 1,
+            item_id=new_item_id,
             quantity=quantity,
             weight=weight,
             unit=unit

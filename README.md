@@ -9,6 +9,11 @@ Well, it's a bot right? According to Google _a bot is an autonomous program on a
 ### Architecture
 
 ### Deployment
+This script would:
+1. Create a new WebApp and AppService
+2. Use an existing Resource Group (if an existing one is passed) or create a new one (if a non existing name is passed)
+3. Create a Direct Line connection and it's config file
+
 ```
 az deployment create --name "appName" --template-file "template-with-new-rg.json" --location "westus" --parameters appId="appid" appSecret="appsecret" botId="appName" botSku=S1 newAppServicePlanName="app-service-name" newWebAppName="appName" groupName="RG" groupLocation="westus" newAppServicePlanLocation="westus"
 az webapp up -n webapp-name

@@ -1,5 +1,6 @@
 from recognizers_text import Culture
 
+from data import constants
 from .item import Item
 
 
@@ -28,14 +29,21 @@ class Action:
             unit=unit
         )
 
-    def parse_input(self, user_input, current_order):
+    def parse_input(self, user_input, current_order, action):
         from helpers import DialogHelper
+
+        splitted_input = user_input.split()
+        unit = ''
+        for input in splitted_input:
+            if input in constants.ConstantUnits.units:
+                has_unit = True
+                unit = input
 
         results = [sub_list for sub_list in DialogHelper.parse_all(user_input, Culture.English) if sub_list]
         match = next((item for sublist in results for item in sublist), None)
 
-        has_unit, weight, is_quantity, quantity, unit = DialogHelper.resolve_quantity_and_weigh(match)
-        item_description = DialogHelper.normalize_description(has_unit, is_quantity, user_input, match)
+        has_unit, weight, is_quantity, quantity = DialogHelper.resolve_quantity_and_weight(match)
+        item_description = DialogHelper.normalize_description(has_unit, is_quantity, user_input, unit, match)
 
         item = next(
             (
@@ -45,6 +53,17 @@ class Action:
             ),
             self.create_item(current_order, quantity, weight, item_description, unit),
         )
+
+        if action.description == 'added':
+            if weight == 0 and item.unit != '':
+                weight = 0.5
+            elif quantity == 0 and item.unit == '':
+                quantity = 1
+        else:
+            if weight == 0 and item.unit != '':
+                weight = item.weight
+            elif quantity == 0 and item.unit == '':
+                quantity = item.quantity
 
         return has_unit, weight, is_quantity, quantity, unit, item_description, item
 

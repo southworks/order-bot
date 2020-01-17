@@ -1,5 +1,6 @@
 from typing import List
 
+import slack
 from botbuilder.dialogs import (
     ComponentDialog,
     WaterfallDialog,
@@ -49,10 +50,11 @@ class OrderDialog(ComponentDialog):
     async def options_step(
         self, step_context: WaterfallStepContext
     ) -> DialogTurnResult:
+        from config import DefaultConfig
         if not step_context.options:
             self.current_order = DialogHelper.init_dialog()
 
-        card = self.current_order.generate_list_items_card()
+        card = self.current_order.generate_list_items(slack.WebClient(DefaultConfig.SLACK_BOT_TOKEN))
 
         response = activity_helper.create_activity_reply(
             step_context.context.activity, "", "", [card]

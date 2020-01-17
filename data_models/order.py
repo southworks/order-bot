@@ -5,6 +5,7 @@ from botbuilder.core import CardFactory
 from botbuilder.schema import Attachment
 from pyadaptivecards.card import AdaptiveCard
 from pyadaptivecards.components import TextBlock
+import slack
 
 from .item import Item
 
@@ -69,35 +70,17 @@ class Order:
 
         return content
 
-    def generate_list_items_card(self) -> Attachment:
-        from pyadaptivecards.card import AdaptiveCard
-        from pyadaptivecards.inputs import Text, Number
-        from pyadaptivecards.components import TextBlock
-        from pyadaptivecards.actions import Submit
-
-        body = []
-        greeting = TextBlock("Current order", color="good", weight="bolder", size="medium")
-        submit = Submit(title="Confirm Order")
-
-        body.append(greeting)
+    def generate_list_items(self, context: slack.WebClient):
+        list = []
 
         for item in self.item_list:
             if item.unit.description == '':
                 item_desc = TextBlock(f'{item.quantity} {item.description}')
             else:
                 item_desc = TextBlock(f'{item.weigth}{item.unit.description} {item.description}')
-            body.append(item_desc)
+            list.append(item_desc)
 
-        # card = AdaptiveCard(body=body, actions=[submit])
-        card = AdaptiveCard(body=body, actions=[submit])
-
-        # Create attachment
-        attachment = {
-            "contentType": "application/vnd.microsoft.card.adaptive",
-            "content": card.to_dict()
-        }
-
-        return attachment
+        context.chat_postMessage("UE1KC9ACT","resources/Card.json")
 
 
 class OrderStatus(enum.Enum):

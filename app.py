@@ -1,7 +1,11 @@
+import json
+import os
 import sys
 import traceback
 from datetime import datetime
 
+import certifi
+import slack
 from aiohttp import web
 from aiohttp.web import Request, Response, json_response
 from botbuilder.core import (
@@ -66,36 +70,37 @@ USER_STATE = UserState(MEMORY)
 DIALOG = OrderDialog(USER_STATE)
 BOT = OrderBot(CONVERSATION_STATE, USER_STATE, DIALOG)
 
+@slack.RTMClient.run_on(event="message")
+def message(**payload):
+    """Display the onboarding welcome message after receiving a message
+    that contains "start".
+    """
+    data = payload["data"]
+    web_client = payload["web_client"]
+    channel_id = data.get("channel")
+    user_id = data.get("user")
+    text = data.get("text")
 
-# Listen for incoming requests on /api/messages
-async def messages(req: Request) -> Response:
-    # Main bot message handler.
-    if "application/json" in req.headers["Content-Type"]:
-        body = await req.json()
-    else:
-        return Response(status=415)
+    card_path = os.path.join(os.getcwd(), "resources/Card.json")
+    with open(card_path, "rb") as in_file:
+        card_data = json.load(in_file)
+    print(card_data)
+    web_client.chat_postMessage(channel=CONFIG.USER_ID, blocks=json.dumps(card_data))
 
-    activity = Activity().deserialize(body)
-    auth_header = (
-        req.headers["Authorization"] if "Authorization" in req.headers else ""
-    )
-
-    try:
-        response = await ADAPTER.process_activity(
-            activity, auth_header, BOT.on_turn
-        )
-        if response:
-            return json_response(data=response.body, status=response.status)
-        return Response(status=201)
-    except Exception as exception:
-        raise exception
 
 
 APP = web.Application(middlewares=[aiohttp_error_middleware])
-APP.router.add_post("/api/messages", messages)
+APP.router.add_post("/api/messages", message)
+
+
+import ssl as ssl_lib
 
 if __name__ == "__main__":
     try:
-        web.run_app(APP, host="localhost", port=CONFIG.PORT)
+        ssl_context = ssl_lib.create_default_context(cafile=certifi.where())
+        slack_token = CONFIG.SLACK_BOT_TOKEN
+        print(slack_token)
+        rtm_client = slack.RTMClient(token=slack_token, ssl=ssl_context)
+        rtm_client.start()
     except Exception as error:
         raise error

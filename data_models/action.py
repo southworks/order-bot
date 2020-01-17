@@ -85,8 +85,8 @@ class Confirm(Action):
     """ TODO: Add description for Confirm class. """
 
     def execute(self, quantity, weight, order, item):
-        quantity, weight, item = order.confirm_order()
-        return quantity, weight, item
+        order.confirm_order()
+        return 0, 0, item
 
     @property
     def description(self):

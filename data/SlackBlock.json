@@ -1,0 +1,42 @@
+[
+    {
+        "type": "context",
+        "elements": [
+            {
+                "type": "mrkdwn",
+                "text": "Last updated: Jan 1, 2019"
+            }
+        ]
+    },
+    {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": "*Order #*"
+        }
+    },
+    {
+        "type": "divider"
+    },
+    {
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": "5 0 Coca Cola\n2 0.0 Agua Mineral\n0 0.5kg Frutos Secos\n0 1.0kg Banana\n0 0.5kg Yerba Organica\n0 1.0kg cereales\n2 0 chocolate\n"
+        }
+    },
+    {
+        "type": "actions",
+        "elements": [
+            {
+                "type": "button",
+                "text": {
+                    "type": "plain_text",
+                    "text": "Confirm",
+                    "emoji": true
+                },
+                "value": "click_me_123"
+            }
+        ]
+    }
+]

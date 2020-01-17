@@ -12,6 +12,7 @@ from .item import Item
 
 
 data_file_url = "data/data.txt"
+out_data_file_url = "data/SlackBlock.json"
 
 
 class Order:
@@ -135,7 +136,7 @@ class Order:
         open(data_file_url, "w").close()
 
         data = {"items": []}
-
+        data_desc = ''
         for item in self.item_list:
             data["items"].append({
                 "product_id": item.product_id,
@@ -145,9 +146,16 @@ class Order:
                 "weight": item.weight,
                 "unit": item.unit,
             })
+            data_desc += f'{item.quantity} {item.weight}{item.unit} {item.description}\n'
 
         with open(data_file_url, 'w') as outfile:
             json.dump(data, outfile, indent=4)
+        with open(out_data_file_url) as slackblock:
+            data_slack = json.load(slackblock)
+            data_slack[3]['text']['text'] = data_desc
+        with open(out_data_file_url, 'w') as slackblock:
+            json.dump(data_slack, slackblock, indent=4)
+
 
 
 class OrderStatus(enum.Enum):

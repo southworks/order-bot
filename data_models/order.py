@@ -11,6 +11,9 @@ from pyadaptivecards.container import ColumnSet
 from .item import Item
 
 
+data_file_url = "data/data.txt"
+
+
 class Order:
     """ Represents an Order, that contains a list of items to Order. """
 
@@ -27,8 +30,9 @@ class Order:
             if item in self.item_list:
                 for i in range(0, len(self.item_list)):
                     if item.product_id == self.item_list[i].product_id:
+                        item.quantity = int(item.quantity)
                         item.quantity += 0 if not quantity else quantity
-                        item.weigth += 0 if not weight else weight
+                        item.weight += 0 if not weight else weight
             else:
                 self.item_list.append(item)
         else:
@@ -38,12 +42,15 @@ class Order:
         """ Removes items from the list if the remaining quantity is 0
             If quantity is greater than 0, then the item is modified
         """
-        if (quantity and quantity != 0 and quantity >= item.quantity) or (weight and weight != 0 and weight >= item.weigth):
+        item.quantity = int(item.quantity)
+        item.weight = float(item.weight)
+
+        if (quantity and quantity != 0 and quantity >= item.quantity) or (weight and weight != 0 and weight >= item.weight):
             self.item_list.remove(item)
         elif not item.unit and quantity != 0:
             item.quantity -= quantity
         elif not item.unit and weight != 0:
-            item.weigth -= weight
+            item.weight -= weight
 
     def confirm_order(self):
         ''' Confirms the Order '''
@@ -90,7 +97,7 @@ class Order:
                 quantity_column_items.append(TextBlock(f'{item.quantity}'))
             else:
                 item_column_items.append(TextBlock(f'{item.description.capitalize()}'))
-                quantity_column_items.append(TextBlock(f'{item.weigth} {item.unit.capitalize()}'))
+                quantity_column_items.append(TextBlock(f'{item.weight} {item.unit.capitalize()}'))
 
         card = AdaptiveCard(body=body, actions=[submit])
         quantity_column = Column(items=quantity_column_items)
@@ -105,6 +112,42 @@ class Order:
         data_value = attachment['content']['actions'][0]['data'] = 'Confirm'
 
         return attachment
+
+    def read_json_data_from_file(self):
+        import json
+        from .item import Item
+
+        with open(data_file_url) as json_file:
+            data = json.load(json_file)
+            for i in data["items"]:
+                item = Item(product_id=0, item_id=0, quantity=0, weight=0, description="", unit='')
+                item.product_id = i["product_id"] if "product_id" in i else 0
+                item.item_id = i["item_id"] if "item_id" in i else 0
+                item.description = i["description"] if "description" in i else ''
+                item.quantity = i["quantity"] if "quantity" in i else 0
+                item.weight = i["weight"] if "weight" in i else 0
+                item.unit = i["unit"] if "unit" in i else ''
+                self.item_list.append(item)
+
+    def write_json_data_to_file(self):
+        import json
+        # warning: this clears the file content before writing it again
+        open(data_file_url, "w").close()
+
+        data = {"items": []}
+
+        for item in self.item_list:
+            data["items"].append({
+                "product_id": item.product_id,
+                "item_id": item.item_id,
+                "description": item.description,
+                "quantity": item.quantity,
+                "weight": item.weight,
+                "unit": item.unit,
+            })
+
+        with open(data_file_url, 'w') as outfile:
+            json.dump(data, outfile, indent=4)
 
 
 class OrderStatus(enum.Enum):

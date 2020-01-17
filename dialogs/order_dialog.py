@@ -73,7 +73,7 @@ class OrderDialog(ComponentDialog):
         step_context.values['input'] = step_context.result
         user_input = step_context.values['input'].lower()
         action = DialogHelper.recognize_intention(user_input)
-        has_unit, weight, is_quantity, quantity, unit, item_description, item = action.parse_input(user_input, self.current_order)
+        has_unit, weight, is_quantity, quantity, unit, item_description, item = action.parse_input(user_input, self.current_order, action)
         action.execute(quantity, weight, self.current_order, item)
 
         if self.current_order.status == OrderStatus.Confirmed:
@@ -106,15 +106,17 @@ class OrderDialog(ComponentDialog):
                     ),
                 )
 
-        await self.show_action_taken(step_context, quantity, weight, item_description, unit, action)
+        await self.show_action_taken(step_context, quantity, weight, item_description, item.unit, action)
 
         return await step_context.replace_dialog(self.id, step_context.result)
 
     async def goodbye_step(
         self, step_context: WaterfallStepContext
     ) -> DialogTurnResult:
-        """ TODO: Add description for OrderDialog.second_step """
         if step_context.result:
+            # confirm order: write file
+            self.current_order.write_json_data_to_file()
+
             await step_context.context.send_activity(
                 MessageFactory.text("The order was confirmed!")
             )
@@ -134,13 +136,13 @@ class OrderDialog(ComponentDialog):
         if quantity:
             await step_context.context.send_activity(
                 MessageFactory.text(
-                    f"{quantity} {item_description} was {action.description}!"
+                    f"{quantity} {item_description.capitalize()} was {action.description.capitalize()}!"
                 )
             )
         elif weight:
             await step_context.context.send_activity(
                 MessageFactory.text(
-                    f"{weight} {unit} of {item_description} was {action.description}!"
+                    f"{weight} {unit} of {item_description.capitalize()} was {action.description.capitalize()}!"
                 )
             )
 

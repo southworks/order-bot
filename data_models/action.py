@@ -104,6 +104,6 @@ class Confirm(Action):
     def create_item(current_order, quantity, weight, item_description, unit):
         return None
 
-    def parse_input(self, user_input, current_order):
+    def parse_input(self, user_input, current_order, action):
         return None, None, None, None, None, None, None
 

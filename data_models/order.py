@@ -120,7 +120,7 @@ class Order:
         with open(data_file_url) as json_file:
             data = json.load(json_file)
             for i in data["items"]:
-                item = Item(product_id=0, item_id=0, quantity=0, description="", unit='')
+                item = Item(product_id=0, item_id=0, quantity=0, weight=0, description="", unit='')
                 item.product_id = i["product_id"] if "product_id" in i else 0
                 item.item_id = i["item_id"] if "item_id" in i else 0
                 item.description = i["description"] if "description" in i else ''

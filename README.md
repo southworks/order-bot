@@ -49,3 +49,8 @@ Running the bot and testing it is simple:
 2. Los issues se asignan a un milestone, la versión no se cierra hasta que el milestone no este completo
 3. Si hay un  bug en una versión, se setea para la proxima versión como prioritario. Se taggea con _bug_.
 
+Branches
+1. Cada version tiene un branch base (order-bot-vX)
+2. Cada feature tiene un branch (order-bot-vX-featureY)
+3. Los features terminados se mergean al branch base de la versión
+4. Por ultimo, se mergea la versión a master cuando este lista para ser deployada.

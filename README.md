@@ -40,3 +40,12 @@ Running the bot and testing it is simple:
 
 ![*insert image of working bot*](https://github.com/southworks/order-bot/blob/master/documentation/readme_screenshots/Bot_Framework_Emulator_wTX09dpSCY.png)
 
+
+
+
+## Metodologia
+
+1. Se crean los issue y setean para una versión en particular
+2. Los issues se asignan a un milestone, la versión no se cierra hasta que el milestone no este completo
+3. Si hay un  bug en una versión, se setea para la proxima versión como prioritario. Se taggea con _bug_.
+

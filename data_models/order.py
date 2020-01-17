@@ -129,7 +129,6 @@ class Order:
                 item.unit = i["unit"] if "unit" in i else ''
                 self.item_list.append(item)
 
-    # TODO: CONTINUE HERE
     def write_json_data_to_file(self):
         import json
         # warning: this clears the file content before writing it again

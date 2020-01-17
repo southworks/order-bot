@@ -58,7 +58,6 @@ class DialogHelper:
     @staticmethod
     def init_dialog():
         order_list = []
-        # TODO: Move this Code to Tests
 
         # create items
         item1 = Item(

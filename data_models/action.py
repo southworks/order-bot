@@ -54,17 +54,6 @@ class Action:
             self.create_item(current_order, quantity, weight, item_description, unit),
         )
 
-        if action.description == 'added':
-            if weight == 0 and item.unit != '':
-                weight = 0.5
-            elif quantity == 0 and item.unit == '':
-                quantity = 1
-        else:
-            if weight == 0 and item.unit != '':
-                weight = item.weight
-            elif quantity == 0 and item.unit == '':
-                quantity = item.quantity
-
         return has_unit, weight, is_quantity, quantity, unit, item_description, item
 
 
@@ -72,7 +61,8 @@ class Add(Action):
     """ TODO: Add description for Add class. """
 
     def execute(self, quantity, weight, order, item):
-        order.add_item(quantity, weight, item)
+        quantity, weight, item = order.add_item(quantity, weight, item)
+        return quantity, weight, item
 
     @property
     def description(self):
@@ -83,7 +73,8 @@ class Remove(Action):
     """ TODO: Add description for Remove class. """
 
     def execute(self, quantity, weight, order, item):
-        order.remove_item(quantity, weight, item)
+        quantity, weight, item = order.remove_item(quantity, weight, item)
+        return quantity, weight, item
 
     @property
     def description(self):
@@ -94,7 +85,8 @@ class Confirm(Action):
     """ TODO: Add description for Confirm class. """
 
     def execute(self, quantity, weight, order, item):
-        order.confirm_order()
+        quantity, weight, item = order.confirm_order()
+        return quantity, weight, item
 
     @property
     def description(self):

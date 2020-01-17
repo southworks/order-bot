@@ -30,6 +30,11 @@ class Order:
             if item in self.item_list:
                 for i in range(0, len(self.item_list)):
                     if item.product_id == self.item_list[i].product_id:
+                        if weight == 0 and item.unit != '':
+                            weight = 0.5
+                        elif quantity == 0 and item.unit == '':
+                            quantity = 1
+
                         item.quantity = int(item.quantity)
                         item.quantity += 0 if not quantity else quantity
                         item.weight += 0 if not weight else weight
@@ -38,6 +43,8 @@ class Order:
         else:
             self.item_list.append(item)
 
+        return quantity, weight, item
+
     def remove_item(self, quantity, weight, item):
         """ Removes items from the list if the remaining quantity is 0
             If quantity is greater than 0, then the item is modified
@@ -45,12 +52,19 @@ class Order:
         item.quantity = int(item.quantity)
         item.weight = float(item.weight)
 
+        if weight == 0 and item.unit != '':
+            weight = item.weight
+        elif quantity == 0 and item.unit == '':
+            quantity = item.quantity
+
         if (quantity and quantity != 0 and quantity >= item.quantity) or (weight and weight != 0 and weight >= item.weight):
             self.item_list.remove(item)
         elif not item.unit and quantity != 0:
             item.quantity -= quantity
         elif not item.unit and weight != 0:
             item.weight -= weight
+
+        return quantity, weight, item
 
     def confirm_order(self):
         ''' Confirms the Order '''

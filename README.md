@@ -40,17 +40,17 @@ Running the bot and testing it is simple:
 
 ![*insert image of working bot*](https://github.com/southworks/order-bot/blob/master/documentation/readme_screenshots/Bot_Framework_Emulator_wTX09dpSCY.png)
 
+## Methodology
+
+Backlog organization
+1. Create new issues and assigned them to a project version and milestone.
+2. The version will be closed when the milestone is completed.
+3. If a bug is found on a specific version, it will be fixed on the next version as a priority issue. Also, it will be tagged as _bug_.
+
+Backlog organization
+1. Each version has a base branch, i.g: order-bot-vX.
+2. Each feature belongs to a branch, i.g: order-bot-vX-featureY.
+3. When a feature is finished, it merged on the base branch
+4. A version will be merged to master when is ready to be deployed.
 
 
-
-## Metodologia
-
-1. Se crean los issue y setean para una versión en particular
-2. Los issues se asignan a un milestone, la versión no se cierra hasta que el milestone no este completo
-3. Si hay un  bug en una versión, se setea para la proxima versión como prioritario. Se taggea con _bug_.
-
-Branches
-1. Cada version tiene un branch base (order-bot-vX)
-2. Cada feature tiene un branch (order-bot-vX-featureY)
-3. Los features terminados se mergean al branch base de la versión
-4. Por ultimo, se mergea la versión a master cuando este lista para ser deployada.

@@ -53,4 +53,20 @@ Backlog organization
 3. When a feature is finished, it merged on the base branch
 4. A version will be merged to master when is ready to be deployed.
 
+### What is done
+- A base order is being read and written from a .json file.
+- Some of the operations we can perform are "Add" and "Remove" an item from the order.
+- The order is shown on an Adaptive Card dynamically created.
+- It can recognize item quantities
 
+
+
+### Next steps
+- Recognize when the user wants to add or remove using a different unit. (2Kg Bananas -> 500 Gr Bananas")
+- Add more unit tests.
+- Test whole conversations.
+- Be able to make several operations in one line.
+- Maintain the real number of orders.
+- Write on an email template the final order when it's confirmed.
+- Add concurrency when several users are editing the same order.
+- Consider an alternative to Adaptive Card, due to it's not supported on Slack.

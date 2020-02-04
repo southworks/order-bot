@@ -47,7 +47,7 @@ Backlog organization
 2. The version will be closed when the milestone is completed.
 3. If a bug is found on a specific version, it will be fixed on the next version as a priority issue. Also, it will be tagged as _bug_.
 
-Backlog organization
+Branch organization
 1. Each version has a base branch, i.g: order-bot-vX.
 2. Each feature belongs to a branch, i.g: order-bot-vX-featureY.
 3. When a feature is finished, it merged on the base branch

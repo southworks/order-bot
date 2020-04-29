@@ -27,18 +27,21 @@ Running the bot and testing it is simple:
 
 2. Install python, you can download it here (recommended version 3.7) https://www.python.org/downloads/
 
-3. Open the project (using PyCharm, VSCode or... Notepad++? Who am I to judge)
+3. Make sure to run the following command to install the requested packages:
+- pip install -r requirements.txt
 
-4. Go to a command line, go to the project directory and run `python app.py`. Check for common issues and how to solve them [here]()
+4. Open the project (using PyCharm, VSCode or... Notepad++? Who am I to judge)
 
-5. The cmd should now say "Running on http://localhost:PORT", where PORT will be a number.
+5. Go to a command line, go to the project directory and run `python app.py`. Check for common issues and how to solve them [here]()
+
+6. The cmd should now say "Running on http://localhost:PORT", where PORT will be a number.
 ![*insert cmd image*](https://github.com/southworks/order-bot/blob/master/documentation/readme_screenshots/pycharm64_c0feHXTETT.png)
 
-6. Copy that URL into the Emulator and add '/api/message' to the end ->  http://localhost:PORT/api/message 
+7. Copy that URL into the Emulator and add '/api/message' to the end ->  http://localhost:PORT/api/message 
 
 ![*insert emulator config image*](https://github.com/southworks/order-bot/blob/master/documentation/readme_screenshots/Bot_Framework_Emulator_bMxNfN0N5r.png)
 
-7. Done! Now you should have something like this:
+8. Done! Now you should have something like this:
 
 ![*insert image of working bot*](https://github.com/southworks/order-bot/blob/master/documentation/readme_screenshots/Bot_Framework_Emulator_wTX09dpSCY.png)
 
